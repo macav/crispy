@@ -11,6 +11,9 @@
     "angular-loader": "1.4.x",
     "angular-mocks": "~1.4.x",
     "html5-boilerplate": "~4.3.0",
-    "angular-material": "~0.10.0"
+    "angular-material": "~0.10.0",
+    "angular-ui-router": "~0.2.15",
+    "angular-cookies": "~1.4.1",
+    "angular-socket-io": "~0.7.0"
   }
 }

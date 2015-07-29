@@ -1,0 +1,17 @@
+<form ng-submit="loginUser()" novalidate>
+  <md-content layout-padding layout="row" layout-align="center">
+    <div layout="column">
+      <md-input-container flex>
+        <label>Username</label>
+        <input ng-model="login.username">
+      </md-input-container>
+      <md-input-container flex>
+        <label>Password</label>
+        <input type="password" ng-model="login.password">
+      </md-input-container>
+      <div layout="row" layout-align="center center">
+        <md-button type="submit" class="md-raised md-primary">Login</md-button>
+      </div>
+    </div>
+  </md-content>
+</form>

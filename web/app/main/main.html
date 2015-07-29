@@ -1,0 +1,41 @@
+<md-toolbar layout="row">
+    <div class="md-toolbar-tools">
+        <md-button ng-click="toggleSidenav('left')" hide-gt-sm class="md-icon-button">
+            <md-icon aria-label="Menu" md-svg-icon="https://s3-us-west-2.amazonaws.com/s.cdpn.io/68133/menu.svg"></md-icon>
+        </md-button>
+        <h1>Freshy</h1>
+    </div>
+</md-toolbar>
+<div layout="row" flex layout-fill>
+    <md-sidenav layout="column" class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="$mdMedia('gt-sm')">
+        <ul>
+            <li><a href="#/view1">view 1</a></li>
+            <li><a href="#/view2">view 2</a></li>
+            <li><a ng-click="logout()">logout</a></li>
+        </ul>
+    </md-sidenav>
+    <div layout="column" flex id="content">
+        <md-content layout="column" flex class="md-padding">
+            <!--<p>-->
+                <!--Choose a conversation from the list.-->
+            <!--</p>-->
+            <md-content class="md-padding">
+                <div ng-repeat="message in messages">
+                    <md-card>
+                        <md-card-content>
+                            {{message.time | date:'HH:mm'}} &nbsp; {{message.username}}: {{message.message}}
+                        </md-card-content>
+                    </md-card>
+                    <br />
+                </div>
+            </md-content>
+            <form ng-submit="send()">
+                <md-input-container flex>
+                    <label>Message</label>
+                    <input ng-model="message" ng-change="sendLetter()">
+                </md-input-container>
+                <md-button type="submit" class="md-raised md-primary">Send</md-button>
+            </form>
+        </md-content>
+    </div>
+</div>

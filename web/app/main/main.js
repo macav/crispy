@@ -5,6 +5,11 @@ angular.module('freshy.main', ['ngMaterial'])
 
 .controller('MainCtrl', ['$scope', '$mdSidenav', 'mySocket', '$cookies', '$state', function($scope, $mdSidenav, mySocket, $cookies, $state) {
     $scope.messages = [];
+    $scope.users = [
+      {id: 1, username: 'macav'},
+      {id: 2, username: 'niky'},
+      {id: 3, username: 'emma'}
+    ];
     mySocket.emit('login', $cookies.get('freshyToken'));
     $scope.toggleSidenav = function(menuId) {
         $mdSidenav(menuId).toggle();
@@ -29,7 +34,6 @@ angular.module('freshy.main', ['ngMaterial'])
           $scope.messages[activeMessage[data.username]].message = data.message;
         }
       }
-      console.log(activeMessage);
     });
     $scope.logout = function() {
       $cookies.remove('freshyToken');

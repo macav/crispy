@@ -4,6 +4,7 @@ describe('Freshy auth module', function() {
 
   beforeEach(module('ui.router'));
   beforeEach(module('ngCookies'));
+  beforeEach(module('freshy'));
   beforeEach(module('freshy.auth'));
 
   var scope;

@@ -22,6 +22,7 @@ config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRou
   $urlRouterProvider.when(/(?!\/login).+/, ['$state', '$cookies', function($state, $cookies) {
     if (!$cookies.get('freshyToken')) {
       $state.go('login');
+      return false;
     } else {
       return false;
     }
@@ -42,9 +43,6 @@ config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRou
       url: "/register",
       templateUrl: "auth/register.html"
     })
-}]).
-factory('mySocket', ['socketFactory', function(socketFactory) {
-  return socketFactory();
 }]).
 controller('AppCtrl', ['$scope', '$mdSidenav', function($scope, $mdSidenav){
   $scope.toggleSidenav = function(menuId) {

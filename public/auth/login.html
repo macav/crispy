@@ -1,16 +1,19 @@
 <form ng-submit="loginUser()" novalidate>
   <md-content layout-padding layout="row" layout-align="center">
     <div layout="column">
+      {{message}}
       <md-input-container flex>
         <label>Username</label>
-        <input ng-model="login.username">
+        <input ng-model="login.username" autofocus>
       </md-input-container>
       <md-input-container flex>
         <label>Password</label>
         <input type="password" ng-model="login.password">
       </md-input-container>
       <div layout="row" layout-align="center center">
-        <md-button type="submit" class="md-raised md-primary">Login</md-button>
+        <md-button type="submit" class="md-raised">Login</md-button>
+        <md-button ng-href="/auth/google" class="md-raised md-warn">Login with Google</md-button>
+        <md-button ng-href="/auth/facebook" class="md-raised md-primary">Login with Facebook</md-button>
       </div>
     </div>
   </md-content>

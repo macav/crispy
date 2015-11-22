@@ -11,29 +11,7 @@ angular.module('freshy', [
   'btford.socket-io'
 ]).
 config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
-  $urlRouterProvider.otherwise("/login");
-  $urlRouterProvider.when('/login', ['$state', '$cookies', function($state, $cookies) {
-    if ($cookies.get('freshyToken')) {
-      $state.go('main');
-    } else {
-      return false;
-    }
-  }]);
-  $urlRouterProvider.when(/(?!\/login).+/, ['$state', '$cookies', function($state, $cookies) {
-    if (!$cookies.get('freshyToken')) {
-      $state.go('login');
-      return false;
-    } else {
-      return false;
-    }
-  }]);
-
   $stateProvider
-    .state('login', {
-      url: "/login",
-      templateUrl: "auth/login.html",
-      controller: 'LoginCtrl'
-    })
     .state('main', {
       url: "/main",
       templateUrl: "main/main.html",

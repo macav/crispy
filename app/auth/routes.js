@@ -17,10 +17,10 @@ module.exports = function(app) {
                 return next(err);
             }
             if(!token) {
-                return res.redirect('http://localhost:8000');
+                return res.redirect('http://localhost:8001');
             } else {
                 res.writeHead(302, {
-                    'Location': 'http://localhost:8000/#/login/callback?token=' + token
+                    'Location': 'http://localhost:8001/#/login/callback?token=' + token
                 });
                 res.end();
             }
@@ -38,21 +38,21 @@ module.exports = function(app) {
                 return next(err);
             }
             if(!token) {
-                return res.redirect('http://localhost:8000');
+                return res.redirect('http://localhost:8001');
             } else {
                 res.writeHead(302, {
-                    'Location': 'http://localhost:8000/#/login/callback?token=' + token
+                    'Location': 'http://localhost:8001/#/login/callback?token=' + token
                 });
                 res.end();
             }
         })(req, res, next);
     });
     app.post('/auth/local', function(req, res, next) {
-        req._passport.instance.authenticate('local', function(err, token, info) {
+        req._passport.instance.authenticate('local', function(err, token, user) {
             if (!token) {
                 return res.json({success: false, message: 'User not found'});
             }
-            res.json({success: true, token: token});
+            res.json({success: true, user: user.email, userId: user._id, token: token});
         })(req, res, next);
     });
     app.post('/auth/refresh_token', function(req, res, next) {

@@ -20,6 +20,7 @@ describe('Freshy main module', function() {
   beforeEach(module('ngMaterial'));
   beforeEach(module('freshy'));
   beforeEach(module('freshy.main'));
+  beforeEach(module('freshy.auth'));
 
   var scope, ctrl, socketMock, $httpBackend;
   var username = 'user1';
@@ -27,7 +28,8 @@ describe('Freshy main module', function() {
   beforeEach(inject(function($controller, $rootScope, _$httpBackend_) {
     scope = $rootScope.$new();
     $httpBackend = _$httpBackend_;
-    $httpBackend.expectGET("auth/login.html").respond({});
+    $httpBackend.whenGET("auth/login.html").respond({});
+    $httpBackend.whenGET("main/main.html").respond({});
     socketMock = new sockMock($rootScope);
     ctrl = $controller('MainCtrl', {$scope: scope, mySocket: socketMock});
   }));

@@ -3,7 +3,7 @@
 angular.module('freshy.main', ['ngMaterial'])
 
 
-.controller('MainCtrl', ['$scope', '$mdSidenav', 'mySocket', '$cookies', '$state', function($scope, $mdSidenav, mySocket, $cookies, $state) {
+.controller('MainCtrl', ['$scope', '$mdSidenav', 'mySocket', '$cookies', '$state', 'AuthService', function($scope, $mdSidenav, mySocket, $cookies, $state, AuthService) {
     $scope.messages = [];
     $scope.users = [
       {id: 1, username: 'macav'},
@@ -36,7 +36,7 @@ angular.module('freshy.main', ['ngMaterial'])
       }
     });
     $scope.logout = function() {
-      $cookies.remove('freshyToken');
+      AuthService.logout();
       $state.go('login');
     };
     mySocket.on('reconnect', function() {

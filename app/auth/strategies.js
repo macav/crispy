@@ -9,7 +9,7 @@ module.exports = function(passport) {
     passport.use(new GoogleStrategy({
         clientID: '202511624233-8s38iqin9lu9v0oqeqalglcm28e69dk0.apps.googleusercontent.com',
         clientSecret: 'Uyfhte5oAvi67KZ3guw4iHfz',
-        callbackURL: 'http://localhost:8000/auth/google/callback'
+        callbackURL: 'http://localhost:8001/auth/google/callback'
       }, function(accessToken, refreshToken, profile, done) {
         process.nextTick(function() {
             User.findOne({googleId: profile.id},function(err,user) {
@@ -39,14 +39,14 @@ module.exports = function(passport) {
                     });
                 }
                 var token = jwt.sign({userId: user._id, email: user.email}, jwtConfig.secret, { expiresIn: jwtConfig.expiresIn });
-                return done(null, token);
+                return done(null, token, user);
             });
         });
     }));
     passport.use(new FacebookStrategy({
         clientID: '1707430009485972',
         clientSecret: 'c317fe52d12d8d983e8025fe793e18c6',
-        callbackURL: 'http://localhost:8000/auth/facebook/callback',
+        callbackURL: 'http://localhost:8001/auth/facebook/callback',
         profileFields: ["id", "birthday", "email", "first_name", "gender", "last_name"]
       }, function(accessToken, refreshToken, profile, done) {
         process.nextTick(function() {
@@ -76,7 +76,7 @@ module.exports = function(passport) {
                     });
                 }
                 var token = jwt.sign({userId: user._id, email: user.email}, jwtConfig.secret, { expiresIn: jwtConfig.expiresIn });
-                return done(null, token);
+                return done(null, token, user);
             });
         });
     }));
@@ -93,7 +93,7 @@ module.exports = function(passport) {
                         return done(null, false);
                     }
                     var token = jwt.sign({userId: user._id, email: user.email}, jwtConfig.secret, { expiresIn: jwtConfig.expiresIn });
-                    return done(null, token);
+                    return done(null, token, user);
                 }
             });
         });

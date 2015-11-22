@@ -1,6 +1,6 @@
-var User = require('./models/user');
+var User = require('../models/user');
 var jwt            = require('jsonwebtoken');
-var jwtConfig      = require('../config/jwt.js');
+var jwtConfig      = require('../../config/jwt.js');
 
 module.exports = function(app) {
     app.get('/auth/google', function(req, res, next) {

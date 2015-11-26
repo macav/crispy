@@ -41,13 +41,14 @@ app.use(methodOverride('X-HTTP-Method-Override'));
 // set the static files location /public/img will be /img for users
 app.use(express.static(__dirname + '/public')); 
 
+var io = require('./app/sockets')(server); // configure our socket server  
+app.set('io', io);
+
 var router = express.Router();
 // routes ==================================================
-require('./app/routes')(router); // configure our routes
+require('./app/routes')(app, router); // configure our routes
 app.use('/api', router);
 require('./app/auth/routes')(app);
-
-require('./app/sockets')(server); // configure our socket server  
 
 // start app ===============================================
 // startup our app at http://localhost:8080

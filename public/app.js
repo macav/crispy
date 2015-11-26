@@ -15,7 +15,8 @@ config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRou
     .state('main', {
       url: "/main",
       templateUrl: "main/main.html",
-      controller: 'MainCtrl'
+      controller: 'MainCtrl',
+      controllerAs: 'vm'
     })
     .state('register', {
       url: "/register",

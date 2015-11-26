@@ -3,9 +3,10 @@
 // grab the nerd model we just created
 var Bear = require('./models/bear');
 var User = require('./models/user');
+var Message = require('./models/message');
 var jwt = require('jsonwebtoken');
 
-    module.exports = function(router) {
+    module.exports = function(app, router) {
 
         router.route('/register')
         .post(function(req, res) {
@@ -39,9 +40,15 @@ var jwt = require('jsonwebtoken');
                 if (err) {
                     return res.status(401).send({success: false, message: err.name === 'TokenExpiredError' ? 'Token expired' : 'User not authenticated'});
                 }
-                req.user = decoded;
-                console.log('Decoded:', decoded);
-                next();
+                User.findOne({_id: decoded.userId}, function(err, user) {
+                  if (err) {
+                    console.log("Couldn't find user");
+                    return res.status(500, err);
+                  }
+                  req.user = user;
+                  next();
+                });
+                // console.log('Decoded:', decoded);
             });
         });
 
@@ -100,6 +107,34 @@ var jwt = require('jsonwebtoken');
                     res.send(err);
 
                 res.status(204).send();
+            });
+        });
+
+        router.route('/messages')
+        .post(function(req, res) {
+            var message = new Message();
+            message.message = req.body.message;
+            message.user = req.user._id;
+
+            message.save(function(err, message) {
+                if (err)
+                    res.send(err);
+
+                app.get('io').emit('received', {
+                  user: req.user,
+                  message: message.message,
+                  date: message.date
+                });
+                message.user = req.user;
+                res.status(201).json(message);
+            })
+        })
+        .get(function(req, res) {
+            Message.find().populate('user').exec(function(err, messages) {
+                if (err)
+                    res.send(err);
+
+                res.json(messages);
             });
         });
 

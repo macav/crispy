@@ -14,6 +14,8 @@
     "angular-ui-router": "latest",
     "angular-cookies": "~1.x",
     "angular-socket-io": "latest",
-    "socket.io.client": "latest"
+    "socket.io.client": "latest",
+    "angular-jwt": "~0.0.9",
+    "jquery": "~2.1.4"
   }
 }

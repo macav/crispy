@@ -1,35 +1,43 @@
+var User = require('./models/user');
+
 module.exports = function(server) {
   var io = require('socket.io')(server);
 
   io.on('connection', function(socket) {
     socket.on('login', function(username) {
-      socket.username = username;
-      console.log('we have login from %s', username);
+      User.findOne({_id: username}, function(err, user) {
+        if (err) {
+          console.log('There was an error when finding the logged in user');
+        }
+        socket.user = user;
+        console.log('we have login from %s (%s)', user.email, user._id);
+      });
     });
     socket.on('message', function(message) {
-      console.log('we have a message from %s: %s', socket.username, message);
+      console.log('we have a message from %s: %s', socket.user._id, message);
       socket.broadcast.emit('received', {
-        username: socket.username,
+        user: socket.user._id,
         message: message,
-        time: new Date()
+        date: new Date()
       });
     });
     socket.on('letter', function(letter) {
-      console.log('we have a letter from %s: %s', socket.username, letter);
+      console.log('we have a letter from %s: %s', socket.user._id, letter);
       socket.broadcast.emit('letterreceived', {
-        username: socket.username,
+        user: socket.user,
         message: letter,
-        time: new Date()
+        date: new Date()
       });
     });
     socket.on('reconnect', function() {
-      console.log('user reconnected with id '+socket.id, socket.username);
+      console.log('user reconnected with id '+socket.id, socket.user._id);
     });
     socket.on('disconnect', function() {
-      if (socket.username) {
-        console.log('we have logout from %s', socket.username);
-        delete socket.username;
+      if (socket.user) {
+        console.log('we have logout from %s', socket.user._id);
+        delete socket.user;
       }
     });
   });
+  return io;
 }

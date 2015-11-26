@@ -11,30 +11,32 @@
         <ul>
             <li><a href="#/view1">view 1</a></li>
             <li><a href="#/view2">view 2</a></li>
-            <li><a ng-click="logout()">logout</a></li>
+            <li><a ng-click="vm.logout()">logout</a></li>
         </ul>
     </md-sidenav>
-    <div layout="column" flex id="content">
+    <div layout="column" flex>
         <md-content layout="column" flex class="md-padding">
             <!--<p>-->
                 <!--Choose a conversation from the list.-->
             <!--</p>-->
-            <md-content class="md-padding">
-                <div ng-repeat="message in messages">
+            <md-content chat-scroll="vm.messages">
+                <div ng-repeat="message in vm.messages">
                     <md-card>
                         <md-card-content>
-                            {{message.time | date:'HH:mm'}} &nbsp; {{message.username}}: {{message.message}}
+                            {{message.date | date:'HH:mm'}} &nbsp; {{message.user.email}}: {{message.message}}
                         </md-card-content>
                     </md-card>
                     <br />
                 </div>
             </md-content>
-            <form ng-submit="send()">
-                <md-input-container flex>
-                    <label>Message</label>
-                    <input ng-model="message" ng-change="sendLetter()">
-                </md-input-container>
-                <md-button type="submit" class="md-raised md-primary">Send</md-button>
+            <form ng-submit="vm.send()">
+                <md-content layout="row" flex class="md-padding">
+                    <md-input-container flex>
+                        <label>Message</label>
+                        <input ng-model="vm.message" ng-change="vm.sendLetter()">
+                    </md-input-container>
+                    <md-button type="submit" class="md-raised md-primary">Send</md-button>
+                </md-content>
             </form>
         </md-content>
     </div>

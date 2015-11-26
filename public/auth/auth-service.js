@@ -1,8 +1,10 @@
 (function() {
-    function AuthService($http, $window) {
+    function AuthService($http, $window, $interval, mySocket, jwtHelper) {
         var _isAuthenticated = false;
         var _userData;
         var _accessToken;
+        var _refreshTokenInterval;
+        var socketHandler;
 
         return {
             authenticate: function(username, password) {
@@ -13,10 +15,6 @@
                         self.logout();
                         return;
                     }
-                    _userData = {
-                        email: result.data.user,
-                        id: result.data.userId
-                    };
                     self.authenticateToken(result.data.token);
                 }, function(err) {
                     self.logout();
@@ -28,11 +26,30 @@
                 _accessToken = token;
                 $http.defaults.headers.common.Authorization = 'JWT ' + _accessToken;
                 $window.localStorage.accessToken = _accessToken;
+                _refreshTokenInterval = $interval(this.refreshToken, 3600000);
+                var tokenPayload = jwtHelper.decodeToken(token);
+                _userData = {
+                    email: tokenPayload.email,
+                    id: tokenPayload.userId
+                };
+                mySocket.connect();
+                mySocket.emit('login', _userData.id);
+                socketHandler = mySocket.on('reconnect', function() {
+                    mySocket.emit('login', _userData.id);
+                });
             },
             logout: function() {
+                if (_refreshTokenInterval) {
+                    $interval.cancel(_refreshTokenInterval);
+                    _refreshTokenInterval = null;
+                }
                 _isAuthenticated = false;
                 delete $http.defaults.headers.common.Authorization;
                 delete $window.localStorage.accessToken;
+                mySocket.disconnect();
+                if (socketHandler) {
+                    socketHandler();
+                }
             },
             isAuthenticated: function() {
                 return _isAuthenticated;
@@ -52,10 +69,10 @@
             }
         }
     }
-    AuthService.$inject = ['$http', '$window'];
+    AuthService.$inject = ['$http', '$window', '$interval', 'mySocket', 'jwtHelper'];
 
     angular.module('freshy.auth', [
                  'ui.router',
-                 'ngCookies'])
+                 'angular-jwt'])
     .factory('AuthService', AuthService);
 })();

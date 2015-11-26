@@ -58,8 +58,16 @@
   };
   config.$inject = ['$stateProvider', '$urlRouterProvider'];
 
+  function AuthModuleInit($window, AuthService) {
+    if ($window.localStorage.accessToken) {
+      AuthService.authenticateToken($window.localStorage.accessToken);
+    }
+  }
+  AuthModuleInit.$inject = ['$window', 'AuthService'];
+
   angular.module('freshy.auth')
   .config(config)
   .controller('LoginCtrl', LoginCtrl)
-  .controller('LoginCallbackCtrl', LoginCallbackCtrl);
+  .controller('LoginCallbackCtrl', LoginCallbackCtrl)
+  .run(AuthModuleInit);
 })();

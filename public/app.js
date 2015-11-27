@@ -10,7 +10,7 @@ angular.module('freshy', [
   'ui.router',
   'btford.socket-io'
 ]).
-config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
+config(['$stateProvider', '$urlRouterProvider', '$mdThemingProvider', function($stateProvider, $urlRouterProvider, $mdThemingProvider) {
   $stateProvider
     .state('main', {
       url: "/main",
@@ -21,7 +21,10 @@ config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRou
     .state('register', {
       url: "/register",
       templateUrl: "auth/register.html"
-    })
+    });
+    $mdThemingProvider.theme('default')
+    .primaryPalette('indigo')
+    .accentPalette('blue-grey');
 }]).
 controller('AppCtrl', ['$scope', '$mdSidenav', function($scope, $mdSidenav){
   $scope.toggleSidenav = function(menuId) {

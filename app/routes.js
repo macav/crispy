@@ -112,6 +112,9 @@ var jwt = require('jsonwebtoken');
 
         router.route('/messages')
         .post(function(req, res) {
+          if (!req.body.message) {
+            return res.status(400).json('Neni zadna mesidz');
+          }
             var message = new Message();
             message.message = req.body.message;
             message.user = req.user._id;

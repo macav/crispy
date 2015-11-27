@@ -10,7 +10,7 @@
     "angular-route": "~1.x",
     "angular-loader": "~1.x",
     "angular-mocks": "~1.x",
-    "angular-material": "latest",
+    "angular-material": "master",
     "angular-ui-router": "latest",
     "angular-cookies": "~1.x",
     "angular-socket-io": "latest",

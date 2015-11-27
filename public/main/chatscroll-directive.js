@@ -4,11 +4,8 @@
   function chatScroll($timeout) {
     return {
       restrict: 'EA',
-      scope: {
-        chatScroll: '='
-      },
       link: function(scope, element, attrs) {
-        scope.$watchCollection('chatScroll', function(val) {
+        scope.$watchCollection(attrs.chatScroll, function(val) {
           if (val) {
             $(element).scrollTop(element[0].scrollHeight);
           }

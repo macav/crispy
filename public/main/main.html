@@ -1,12 +1,52 @@
-<md-toolbar layout="row">
+<md-toolbar>
     <div class="md-toolbar-tools">
-        <md-button ng-click="toggleSidenav('left')" hide-gt-sm class="md-icon-button">
+        <md-button ng-click="vm.toggleSidenav('left')" hide-gt-sm class="md-icon-button">
+            <md-icon aria-label="Menu" md-svg-icon="assets/img/menu.svg"></md-icon>
+        </md-button>
+        <h1>Crispy</h1>
+    </div>
+</md-toolbar>
+<section layout="row" flex>
+    <md-sidenav layout="column" class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="$mdMedia('gt-sm')">
+        <ul>
+            <li><a ng-click="vm.logout()" href>Logout</a></li>
+            <li><a href="#/view1">view 1</a></li>
+            <li><a href="#/view2">view 2</a></li>
+        </ul>
+    </md-sidenav>
+    <md-content flex layout="column">
+        <md-content flex layout="row" chat-scroll="vm.messages">
+          <div style="width: 100%; position: absolute">
+            <div ng-repeat="message in vm.messages">
+                <md-card>
+                    <md-card-content>
+                        {{message.date | date:'HH:mm'}} &nbsp; {{message.user.email}}: {{message.message}}
+                    </md-card-content>
+                </md-card>
+                <br />
+            </div>
+          </div>
+        </md-content>
+        <form layout="row" layout-padding ng-submit="vm.send()">
+            <md-input-container flex>
+                <label>Message</label>
+                <input ng-model="vm.message" ng-change="vm.sendLetter()">
+            </md-input-container>
+            <md-button type="submit" class="md-raised md-primary">Send</md-button>
+        </form>        
+    </md-content>
+    </div>
+</section>
+<!-- <md-toolbar>
+    <div class="md-toolbar-tools">
+        <md-button ng-click="vm.toggleSidenav('left')" hide-gt-sm class="md-icon-button">
             <md-icon aria-label="Menu" md-svg-icon="https://s3-us-west-2.amazonaws.com/s.cdpn.io/68133/menu.svg"></md-icon>
         </md-button>
         <h1>Crispy</h1>
     </div>
 </md-toolbar>
-<div layout="row" flex layout-fill>
+
+<div layout="row" flex>
     <md-sidenav layout="column" class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="$mdMedia('gt-sm')">
         <ul>
             <li><a href="#/view1">view 1</a></li>
@@ -16,11 +56,8 @@
     </md-sidenav>
     <div layout="column" flex>
         <md-content layout="column" flex class="md-padding">
-            <!--<p>-->
-                <!--Choose a conversation from the list.-->
-            <!--</p>-->
-            <md-content chat-scroll="vm.messages">
-                <div ng-repeat="message in vm.messages">
+            <md-content chat-scroll="vm.messages" style="overflow: none">
+                <div ng-repeat="message in vm.messages | limitTo:3">
                     <md-card>
                         <md-card-content>
                             {{message.date | date:'HH:mm'}} &nbsp; {{message.user.email}}: {{message.message}}
@@ -40,4 +77,4 @@
             </form>
         </md-content>
     </div>
-</div>
+</div> -->

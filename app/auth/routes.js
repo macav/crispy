@@ -5,8 +5,8 @@ var jwtConfig      = require('../../config/jwt.js');
 module.exports = function(app) {
     app.get('/auth/google', function(req, res, next) {
         var passport = req._passport.instance;
-    
-        passport.authenticate('google', {scope: 'https://www.googleapis.com/auth/userinfo.email'}, function(err, user, info) {
+
+        passport.authenticate('google', {scope: 'https://www.googleapis.com/auth/plus.login'}, function(err, user, info) {
 
         })(req,res,next);
     });
@@ -52,7 +52,14 @@ module.exports = function(app) {
             if (!token) {
                 return res.json({success: false, message: 'User not found'});
             }
-            res.json({success: true, user: user.email, userId: user._id, token: token});
+            var filtered = [];
+            var active = app.get('activeUsers');
+            for (var i = 0; i < active.length; i++) {
+              if (!active[i]._id.equals(user._id)) {
+                filtered.push(active[i]);
+              }
+            }
+            res.json({success: true, user: user.email, userId: user._id, token: token, users: filtered});
         })(req, res, next);
     });
     app.post('/auth/refresh_token', function(req, res, next) {

@@ -24,7 +24,10 @@ config(['$stateProvider', '$urlRouterProvider', '$mdThemingProvider', function($
     });
     $mdThemingProvider.theme('default')
     .primaryPalette('indigo')
-    .accentPalette('blue-grey');
+    .accentPalette('blue');
+    $mdThemingProvider.theme('docs-dark', 'default')
+      .primaryPalette('yellow')
+      .dark();
 }]).
 controller('AppCtrl', ['$scope', '$mdSidenav', function($scope, $mdSidenav){
   $scope.toggleSidenav = function(menuId) {

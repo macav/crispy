@@ -57,6 +57,9 @@
             getUserData: function() {
                 return _userData;
             },
+            getActiveUsers: function() {
+                return $http.get('/api/users');
+            },
             getToken: function() {
                 return $http.defaults.headers.common.Authorization;
             },

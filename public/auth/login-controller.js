@@ -1,11 +1,12 @@
 (function() {
   'use strict';
 
-  function LoginCtrl($scope, $cookies, $state, mySocket, AuthService) {
+  function LoginCtrl($scope, $cookies, $state, mySocket, AuthService, globalData) {
     $scope.login = {};
     $scope.loginUser = function() {
       AuthService.authenticate($scope.login.username, $scope.login.password).then(function(result) {
         if (AuthService.isAuthenticated()) {
+          globalData.users = result.data.users;
           $state.go('main');
         } else {
           $scope.message = result.data.message;
@@ -15,18 +16,21 @@
       });
     };
   };
-  LoginCtrl.$inject = ['$scope', '$cookies', '$state', 'mySocket', 'AuthService'];
+  LoginCtrl.$inject = ['$scope', '$cookies', '$state', 'mySocket', 'AuthService', 'globalData'];
 
-  function LoginCallbackCtrl($scope, $state, $window, AuthService, $location) {
+  function LoginCallbackCtrl($scope, $state, $window, AuthService, $location, globalData) {
     var search = $location.search();
     if (search.token) {
       AuthService.authenticateToken(search.token);
-      $state.go('main');
+      AuthService.getActiveUsers().then(function(response) {
+        globalData.users = response.data;
+        $state.go('main');
+      });
     } else {
       $state.go('login');
     }
   };
-  LoginCallbackCtrl.$inject = ['$scope', '$state', '$window', 'AuthService', '$location'];
+  LoginCallbackCtrl.$inject = ['$scope', '$state', '$window', 'AuthService', '$location', 'globalData'];
 
   function config($stateProvider, $urlRouterProvider) {
     $urlRouterProvider.otherwise('/login');
@@ -58,12 +62,17 @@
   };
   config.$inject = ['$stateProvider', '$urlRouterProvider'];
 
-  function AuthModuleInit($window, AuthService) {
+  function AuthModuleInit($window, AuthService, globalData) {
     if ($window.localStorage.accessToken) {
       AuthService.authenticateToken($window.localStorage.accessToken);
+      if (AuthService.isAuthenticated() && globalData.users.length === 0) {
+        AuthService.getActiveUsers().then(function(response) {
+          globalData.users = response.data;
+        });
+      }
     }
   }
-  AuthModuleInit.$inject = ['$window', 'AuthService'];
+  AuthModuleInit.$inject = ['$window', 'AuthService', 'globalData'];
 
   angular.module('freshy.auth')
   .config(config)

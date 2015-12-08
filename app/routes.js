@@ -117,28 +117,62 @@ var jwt = require('jsonwebtoken');
           }
             var message = new Message();
             message.message = req.body.message;
+            message.recipient = req.body.recipient;
             message.user = req.user._id;
 
             message.save(function(err, message) {
                 if (err)
                     res.send(err);
 
-                app.get('io').emit('received', {
-                  user: req.user,
-                  message: message.message,
-                  date: message.date
-                });
                 message.user = req.user;
+                var ObjectId = require('mongoose').Types.ObjectId;
+                var users = app.get('activeUsers');
+                for (var i = 0; i < users.length; i++) {
+                  if (users[i]._id == req.body.recipient) {
+                    // var message = {
+                    //   user: req.user,
+                    //   recipient: message.recipient
+                    //   message: message.message,
+                    //   date: message.date
+                    // };
+                    users[i].socket.emit('received', message);
+                  }
+                }
+                // app.get('io').emit('received', {
+                //   user: req.user,
+                //   message: message.message,
+                //   recipient: message.recipient,
+                //   date: message.date
+                // });
+
                 res.status(201).json(message);
             })
         })
         .get(function(req, res) {
-            Message.find().populate('user').exec(function(err, messages) {
-                if (err)
-                    res.send(err);
+          var ObjectId = require('mongoose').Types.ObjectId;
+          var params = {};
+          if (req.query.user) {
+            params.$and = [{$or: [{recipient: new ObjectId(req.query.user)}, {recipient: new ObjectId(req.user._id)}]}, {$or: [{user: new ObjectId(req.query.user)}, {user: new ObjectId(req.user._id)}]}]
+          } else {
+            params.$or = [{user: new ObjectId(req.query.user)}, {user: new ObjectId(req.user._id)}];
+          }
+          Message.find(params).sort({'date': 1}).populate('user').exec(function(err, messages) {
+              if (err)
+                  res.send(err);
 
-                res.json(messages);
-            });
+              res.json(messages);
+          });
+        });
+
+        router.get('/users', function(req, res) {
+          var filtered = [];
+          var active = app.get('activeUsers');
+          for (var i = 0; i < active.length; i++) {
+            if (!active[i]._id.equals(req.user._id)) {
+              filtered.push(active[i]);
+            }
+          }
+          res.json(filtered);
         });
 
         router.get('/', function(req, res) {

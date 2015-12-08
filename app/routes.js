@@ -129,22 +129,9 @@ var jwt = require('jsonwebtoken');
                 var users = app.get('activeUsers');
                 for (var i = 0; i < users.length; i++) {
                   if (users[i]._id == req.body.recipient) {
-                    // var message = {
-                    //   user: req.user,
-                    //   recipient: message.recipient
-                    //   message: message.message,
-                    //   date: message.date
-                    // };
                     users[i].socket.emit('received', message);
                   }
                 }
-                // app.get('io').emit('received', {
-                //   user: req.user,
-                //   message: message.message,
-                //   recipient: message.recipient,
-                //   date: message.date
-                // });
-
                 res.status(201).json(message);
             })
         })
@@ -153,6 +140,11 @@ var jwt = require('jsonwebtoken');
           var params = {};
           if (req.query.user) {
             params.$and = [{$or: [{recipient: new ObjectId(req.query.user)}, {recipient: new ObjectId(req.user._id)}]}, {$or: [{user: new ObjectId(req.query.user)}, {user: new ObjectId(req.user._id)}]}]
+            Message.update({user: req.query.user, recipient: req.user._id}, {read: true}, {multi: true}, function(err, response) {
+              if (err) {
+                console.log('Cannot set messages as read');
+              }
+            });
           } else {
             params.$or = [{user: new ObjectId(req.query.user)}, {user: new ObjectId(req.user._id)}];
           }
@@ -165,14 +157,9 @@ var jwt = require('jsonwebtoken');
         });
 
         router.get('/users', function(req, res) {
-          var filtered = [];
-          var active = app.get('activeUsers');
-          for (var i = 0; i < active.length; i++) {
-            if (!active[i]._id.equals(req.user._id)) {
-              filtered.push(active[i]);
-            }
-          }
-          res.json(filtered);
+          require('./utils/parsers')(app).parseActiveUsers(req.user, function(users) {
+            res.json(users);
+          });
         });
 
         router.get('/', function(req, res) {

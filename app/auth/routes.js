@@ -52,14 +52,9 @@ module.exports = function(app) {
             if (!token) {
                 return res.json({success: false, message: 'User not found'});
             }
-            var filtered = [];
-            var active = app.get('activeUsers');
-            for (var i = 0; i < active.length; i++) {
-              if (!active[i]._id.equals(user._id)) {
-                filtered.push(active[i]);
-              }
-            }
-            res.json({success: true, user: user.email, userId: user._id, token: token, users: filtered});
+            require('../utils/parsers')(app).parseActiveUsers(user, function(users) {
+              res.json({success: true, user: user.email, userId: user._id, token: token, users: users});
+            });
         })(req, res, next);
     });
     app.post('/auth/refresh_token', function(req, res, next) {

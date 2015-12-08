@@ -17,6 +17,7 @@
     "socket.io.client": "latest",
     "angular-jwt": "~0.0.9",
     "jquery": "~2.1.4",
-    "underscore": "~1.8.3"
+    "underscore": "~1.8.3",
+    "angular-audio": "~1.7.1"
   }
 }

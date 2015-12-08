@@ -2,23 +2,32 @@
     <md-sidenav layout="column" class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="$mdMedia('gt-sm')">
       <md-content layout="column" layout-align="center center" layout-padding>
         <img src="assets/img/Dad-icon.png" class="img-circle" alt="Profile picture"/>
-        Martin Cavoj
+        <md-button class="profile-edit-button">
+          <md-tooltip md-direction="top">
+            Edit your profile
+          </md-tooltip>
+          Martin Cavoj
+        </md-button>
+        <md-button ng-click="vm.setStatus($event)" class="status-edit-button">
+          {{vm.userStatus || 'Set your status'}}
+        </md-button>
       </md-content>
+      <md-divider></md-divider>
       <md-content>
         <md-list class="userlist">
-          <md-list-item><a class="md-button md-raised md-warn md-ink-ripple" style="width: 100%" ng-click="vm.logout()" href>Logout</a></md-list-item>
           <md-list-item ng-if="!vm.users.length">
             <img ng-src="assets/img/Zombie-icon.png" class="md-avatar" alt="{{::user.email}}" />
             <div class="md-list-item-text">
               Forever alone..
             </div>
           </md-list-item>
-          <md-list-item class="md-2-line" ng-repeat="user in vm.users" ng-class="{active: vm.isSelected(user)}" ng-click="vm.selectUser(user)">
+          <md-list-item class="md-2-line userlist-item" ng-repeat="user in vm.users" ng-class="{active: vm.isSelected(user)}" ng-click="vm.selectUser(user)">
             <img ng-src="assets/img/Dad-icon.png" class="md-avatar" alt="{{::user.email}}" />
             <div class="md-list-item-text">
               <h3>{{ ::user.email }}</h3>
-              <p>Som super</p>
+              <p>{{ user.status || 'No status'}}</p>
             </div>
+            <span class="badge" ng-if="user.unread">{{user.unread}}</span>
           </md-list-item>
         </md-list>
       </md-content>
@@ -30,12 +39,14 @@
                   <md-icon aria-label="Menu" md-svg-icon="assets/img/menu.svg"></md-icon>
               </md-button>
               <h1>Crispy</h1>
+              <span flex></span>
+              <a class="md-button md-raised md-warn md-ink-ripple" ng-click="vm.logout()" href>Logout</a>
           </div>
       </md-toolbar>
       <md-content flex layout="row" chat-scroll="vm.messages">
         <div style="width: 100%; position: absolute">
           <div ng-repeat="message in vm.messages">
-              <md-card>
+              <md-card ng-class="{'message-typing': message.typing}">
                   <md-card-content>
                       {{message.date | date:'HH:mm'}} &nbsp; {{message.user.email}}: {{message.message}}
                   </md-card-content>

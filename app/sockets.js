@@ -1,4 +1,5 @@
 var User = require('./models/user');
+var Message = require('./models/message');
 var ActiveUser = require('./models/active_user');
 var utils = require('./utils/utils')();
 
@@ -17,12 +18,22 @@ module.exports = function(app, server) {
         if (utils.findById(activeUsers, user._id) === null) {
           app.get('activeUsers').push(user);
         }
+
+        function emitUserLogin(activeUser) {
+          Message.find({user: user._id, recipient: activeUser._id, read: false}, function(err, msgs) {
+            var o = user.toObject();
+            if (msgs.length) {
+              o.unread = msgs.length;
+            }
+            activeUser.socket.emit('userLogin', o);
+          });
+        }
+
         for (var i = 0; i < activeUsers.length; i++) {
           if (!activeUsers[i]._id.equals(user._id)) {
-            activeUsers[i].socket.emit('userLogin', user);
+            emitUserLogin(activeUsers[i]);
           }
         }
-        // socket.broadcast.emit('userLogin', user);
         ActiveUser.remove({user: user._id}, function(err, deletedUser) {
           if (err) {
             console.log('Login error: ', err);

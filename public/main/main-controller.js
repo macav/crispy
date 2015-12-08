@@ -1,7 +1,18 @@
 (function() {
   'use strict';
 
-  function MainCtrl($state, $mdSidenav, mySocket, AuthService, MessageService, globalData, $timeout) {
+  function DialogController($scope, status, $mdDialog) {
+    $scope.status = status;
+    $scope.cancel = function() {
+      $mdDialog.cancel();
+    };
+    $scope.ok = function() {
+      $mdDialog.hide($scope.status);
+    };
+  }
+  DialogController.$inject = ['$scope', 'status', '$mdDialog'];
+
+  function MainCtrl($state, $mdSidenav, mySocket, AuthService, MessageService, globalData, $timeout, $mdToast, ngAudio, $mdDialog, $mdMedia) {
     this.toggleSidenav = function(menuId) {
         $mdSidenav(menuId).toggle();
     };
@@ -16,6 +27,7 @@
     };
     vm.selectUser = function(user) {
       activeUser = user;
+      delete user.unread;
       MessageService.query({user: user._id}).then(function(data) {
         vm.messages = data.data;
       });
@@ -25,11 +37,11 @@
     };
 
     vm.users = globalData.users;
-    console.log(globalData.users);
     if (vm.users.length) {
       vm.selectUser(vm.users[0]);
     }
 
+    vm.userStatus = 'Som super';
     mySocket.on('userLogin', function(data) {
       if (!_.findWhere(vm.users, {_id: data._id})) {
           vm.users.push(data);
@@ -64,17 +76,42 @@
       }
       if (angular.isUndefined(activeMessage[data.user._id])) {
         activeMessage[data.user._id] = vm.messages.push(data)-1;
+        vm.messages[activeMessage[data.user._id]].typing = true;
       } else {
         if (!data.message) {
           vm.messages.splice(activeMessage[data.user._id], 1);
           delete activeMessage[data.user._id];
         } else {
           vm.messages[activeMessage[data.user._id]].message = data.message;
+          vm.messages[activeMessage[data.user._id]].typing = true;
         }
       }
     });
     mySocket.on('received', function(data) {
-      if (!activeUser || data.user._id !== activeUser._id || data.user._id == AuthService.getUserData().id) {
+      ngAudio.play("assets/sounds/incoming.mp3");
+      if (activeUser && data.user._id !== activeUser._id) {
+        var user = _.findWhere(vm.users, {_id: data.user._id});
+        if (user) {
+          user.unread = angular.isDefined(user.unread) ? user.unread + 1 : 1;
+          $mdToast.show({
+            controller: 'ToastCtrl',
+            templateUrl: 'main/message-notification-template.html',
+            hideDelay: 3000,
+            resolve: {
+              message: function() {
+                return data.user.email + ': ' + data.message;
+              }
+            },
+            controllerAs: 'vm',
+            position: 'bottom right'
+          }).then(function(response) {
+            if (response === 'goto') {
+              vm.selectUser(user);
+            }
+          });
+        }
+      }
+      if (!activeUser || data.user._id !== activeUser._id) {
         return;
       }
       if (angular.isDefined(activeMessage[data.user._id])) {
@@ -83,9 +120,46 @@
       }
       vm.messages.push(data);
     });
-  }
-  MainCtrl.$inject = ['$state', '$mdSidenav', 'mySocket', 'AuthService', 'MessageService', 'globalData', '$timeout'];
 
-  angular.module('freshy.main', ['ngMaterial'])
-  .controller('MainCtrl', MainCtrl);
+    vm.setStatus = function(evt) {
+      $mdDialog.show({
+        controller: DialogController,
+        templateUrl: 'main/status-template.html',
+        parent: angular.element(document.body),
+        targetEvent: evt,
+        clickOutsideToClose: true,
+        resolve: {
+          status: function() {
+            return vm.userStatus;
+          }
+        },
+        openFrom: '#status'
+      })
+      .then(function(status) {
+        vm.userStatus = status;
+      });
+      // $mdDialog.show(
+      //   $mdDialog.alert()
+      //     .clickOutsideToClose(true)
+      //     .title('This is an alert title')
+      //     .textContent('You can specify some description text in here.')
+      //     .ariaLabel('Alert Dialog Demo')
+      //     .ok('Got it!')
+      //     .targetEvent(evt)
+      // );
+    };
+  }
+  MainCtrl.$inject = ['$state', '$mdSidenav', 'mySocket', 'AuthService', 'MessageService', 'globalData', '$timeout', '$mdToast', 'ngAudio', '$mdDialog', '$mdMedia'];
+
+  angular.module('freshy.main', ['ngMaterial', 'ngAudio'])
+  .controller('MainCtrl', MainCtrl)
+  .controller('ToastCtrl', ['$mdToast', 'message', function($mdToast, message) {
+    this.message = message;
+    this.closeToast = function() {
+      $mdToast.hide('closed');
+    }
+    this.goToMessage = function() {
+      $mdToast.hide('goto');
+    }
+  }]);
 })();

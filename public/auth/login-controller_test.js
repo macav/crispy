@@ -1,11 +1,12 @@
 'use strict';
 
-describe('Freshy auth module', function() {
+describe('Crispy auth module', function() {
 
   beforeEach(module('ui.router'));
   beforeEach(module('ngCookies'));
-  beforeEach(module('freshy'));
-  beforeEach(module('freshy.auth'));
+  beforeEach(module('crispy'));
+  beforeEach(module('crispy.main'));
+  beforeEach(module('crispy.auth'));
   var $httpBackend;
   var scope;
 
@@ -13,7 +14,8 @@ describe('Freshy auth module', function() {
 
     var userData = {
       username: 'test1',
-      password: 'testpass'
+      password: 'testpass',
+      token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEyMzQ1LCJlbWFpbCI6InRlc3QxIiwiaWF0IjoxNDUwNzEyMDQ3LCJleHAiOjE0NTEzMTY4NDd9.iakUF8_f7HXiOOvEKiBVsKPckyf6mlpJjcDcQ5zbCxg'
     };
     var scope, ctrl;
     beforeEach(inject(function($controller, $rootScope, _$httpBackend_) {
@@ -22,28 +24,32 @@ describe('Freshy auth module', function() {
       $httpBackend = _$httpBackend_;
       $httpBackend.whenGET('auth/login.html').respond({});
       $httpBackend.whenGET('main/main.html').respond({});
+      $httpBackend.whenGET('conversation/conversation.html').respond({});
+      $httpBackend.whenGET('/api/users').respond([]);
     }));
 
     it('should have controller defined', inject(function($controller, $rootScope) {
       expect(ctrl).toBeDefined();
     }));
 
-    it('should display error message when user credentials are incorrect', inject(function($state) {
+    it('should display error message when user credentials are incorrect', inject(function($state, $timeout) {
       scope.login = userData;
       scope.loginUser();
       $httpBackend.expectPOST('/auth/local').respond({success: false, message: 'User not found'});
       $httpBackend.flush();
       expect(scope.message).toBe('User not found');
-      expect($state.current.name).toBe('login');
+      $timeout(function() {
+        expect($state.current.name).toBe('login');
+      });
     }));
 
     it('should authenticate user with correct credentials', inject(function($state) {
       scope.login = userData;
       scope.loginUser();
-      $httpBackend.expectPOST('/auth/local').respond({success: true, user: userData.username, userId: 1, token: 'asdf'});
+      $httpBackend.expectPOST('/auth/local').respond({success: true, user: userData.username, userId: 1, token: userData.token});
       $httpBackend.flush();
       expect(scope.message).not.toBeDefined();
-      expect($state.current.name).toBe('main');
+      expect($state.current.name).toBe('main.conversation');
     }));
   });
 });

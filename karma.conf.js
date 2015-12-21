@@ -13,8 +13,12 @@ module.exports = function(config){
       'public/bower_components/angular-ui-router/release/angular-ui-router.js',
       'public/bower_components/angular-mocks/angular-mocks.js',
       'public/bower_components/angular-socket-io/socket.js',
+      'public/bower_components/angular-audio/app/angular.audio.js',
+      'public/bower_components/angular-jwt/dist/angular-jwt.js',
       'public/bower_components/socket.io.client/dist/socket.io-1.3.5.js',
+      'public/bower_components/underscore/underscore.js',
       'public/app.js',
+      'public/**/*.module.js',
       'public/components/**/*.js',
       'public/conversation/**/*.js',
       'public/auth/**/*.js',
@@ -29,7 +33,7 @@ module.exports = function(config){
 
     plugins : [
             'karma-chrome-launcher',
-            'karma-firefox-launcher',
+            // 'karma-firefox-launcher',
             'karma-jasmine',
             'karma-junit-reporter'
             ],

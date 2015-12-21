@@ -158,7 +158,7 @@ var jwt = require('jsonwebtoken');
 
         router.get('/users', function(req, res) {
           require('./utils/parsers')(app).parseActiveUsers(req.user, function(users) {
-            res.json(users);
+            res.status(200).json(users);
           });
         });
 

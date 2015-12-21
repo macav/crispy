@@ -14,6 +14,6 @@
   }
   MessageService.$inject = ['$http'];
 
-  angular.module('freshy.main')
+  angular.module('crispy.main')
   .factory('MessageService', MessageService);
 })();

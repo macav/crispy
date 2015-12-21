@@ -16,6 +16,7 @@ var db = require('./config/db');
 
 // set our port
 var port = process.env.PORT || 8001;
+var staticdir = process.env.NODE_ENV === 'production' ? 'dist' : 'public'; // get static files dir
 
 // connect to our mongoDB database
 // (uncomment after you enter in your own credentials in config/db.js)
@@ -39,7 +40,7 @@ require('./app/auth/strategies')(passport);
 app.use(methodOverride('X-HTTP-Method-Override'));
 
 // set the static files location /public/img will be /img for users
-app.use(express.static(__dirname + '/public'));
+app.use(express.static(__dirname + '/' + staticdir));
 
 var io = require('./app/sockets')(app, server); // configure our socket server
 app.set('io', io);

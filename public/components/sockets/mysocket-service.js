@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('freshy').
+angular.module('crispy').
   factory('mySocket', ['socketFactory', function(socketFactory) {
     return socketFactory();
   }]);

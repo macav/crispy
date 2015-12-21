@@ -10,11 +10,11 @@
             $(element).scrollTop(element[0].scrollHeight);
           }
         });
-      }  
+      }
     };
   }
   chatScroll.$inject = ['$timeout'];
 
-  angular.module('freshy.main')
+  angular.module('crispy.main')
   .directive('chatScroll', chatScroll);
 })();

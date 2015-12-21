@@ -1,20 +1,26 @@
 'use strict';
 
-describe('Freshy auth module', function() {
+describe('Crispy auth module', function() {
 
   beforeEach(module('ui.router'));
   beforeEach(module('ngCookies'));
-  beforeEach(module('freshy'));
-  beforeEach(module('freshy.auth'));
+  beforeEach(module('crispy'));
+  beforeEach(module('crispy.auth'));
 
   describe('AuthService', function(){
 
     var userData = {
       username: 'test1',
       password: 'testpass',
-      token: 'adsf'
+      token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEyMzQ1LCJlbWFpbCI6InRlc3QxIiwiaWF0IjoxNDUwNzEyMDQ3LCJleHAiOjE0NTEzMTY4NDd9.iakUF8_f7HXiOOvEKiBVsKPckyf6mlpJjcDcQ5zbCxg'
     };
-    var authService, $httpBackend;
+    var authService, $httpBackend, socketMock, mockDependency;
+    beforeEach(function() {
+      socketMock = new sockMock({$apply: function() {}});
+      module(function($provide) {
+        $provide.value('mySocket', socketMock);
+      });
+    });
     beforeEach(inject(function(_AuthService_, _$httpBackend_) {
       authService = _AuthService_;
       $httpBackend = _$httpBackend_;
@@ -23,8 +29,19 @@ describe('Freshy auth module', function() {
     describe('Successful authentication', function() {
       beforeEach(function() {
         $httpBackend.expectPOST('/auth/local').respond({success: true, user: userData.username, userId: 1, token: userData.token});
+        $httpBackend.whenGET('/api/users').respond([]);
+        socketMock.clearEmits();
         authService.authenticate(userData.username, userData.password);
         $httpBackend.flush();
+      });
+
+      it('should emit login signal via socket', function() {
+        expect(socketMock.emits['login'].length).toBe(1);
+      });
+
+      it('should emit login signal when reconnect is received', function() {
+        socketMock.receive('reconnect', {});
+        expect(socketMock.emits['login'].length).toBe(1);
       });
 
       it('should authenticate user', function() {
@@ -43,6 +60,7 @@ describe('Freshy auth module', function() {
     describe('Unsuccessful authentication', function() {
       beforeEach(function() {
         $httpBackend.expectPOST('/auth/local').respond({success: false, message: 'User not found'});
+        $httpBackend.whenGET('/api/users').respond([]);
         authService.authenticate(userData.username, userData.password);
         $httpBackend.flush();
       });
@@ -63,10 +81,11 @@ describe('Freshy auth module', function() {
     it('should refresh valid token', function() {
       $httpBackend.expectPOST('/auth/local').respond({success: true, user: userData.username, userId: 1, token: userData.token});
       authService.authenticate(userData.username, userData.password);
-      $httpBackend.expectPOST('/auth/refresh_token').respond({token: 'newToken'});
+      var newToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEyMzQ1LCJlbWFpbCI6InRlc3QxIiwiaWF0IjoxNDUwNzEyMDg5LCJleHAiOjE0NTEzMTY4ODl9.ILy99GMTIX1JS7EmtZHnD5O980T-XQrErTXLJodWzOc';
+      $httpBackend.expectPOST('/auth/refresh_token').respond({token: newToken});
       authService.refreshToken();
       $httpBackend.flush();
-      expect(authService.getToken()).toBe('JWT newToken');
+      expect(authService.getToken()).toBe('JWT '+newToken);
     });
 
     it('should not refresh expired token', function() {

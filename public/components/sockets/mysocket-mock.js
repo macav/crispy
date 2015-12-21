@@ -1,3 +1,4 @@
+'use strict';
 /*
  Simple mock for socket.io
  see: https://github.com/btford/angular-socket-io-seed/issues/4
@@ -34,5 +35,13 @@ var sockMock = function($rootScope){
       });
     }
   };
-
+  this.connect = function() {
+    return true;
+  };
+  this.disconnect = function() {
+    return true;
+  };
+  this.clearEmits = function() {
+    this.emits = {};
+  };
 };

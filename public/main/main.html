@@ -8,20 +8,20 @@
           </md-tooltip>
           Martin Cavoj
         </md-button>
-        <md-button ng-click="vm.setStatus($event)" class="status-edit-button">
-          {{vm.userStatus || 'Set your status'}}
+        <md-button ng-click="main.setStatus($event)" class="status-edit-button">
+          {{main.userStatus || '-- Set your status --'}}
         </md-button>
       </md-content>
       <md-divider></md-divider>
       <md-content>
         <md-list class="userlist">
-          <md-list-item ng-if="!vm.users.length">
+          <md-list-item ng-if="!main.users.length">
             <img ng-src="assets/img/Zombie-icon.png" class="md-avatar" alt="{{::user.email}}" />
             <div class="md-list-item-text">
               Forever alone..
             </div>
           </md-list-item>
-          <md-list-item class="md-2-line userlist-item" ng-repeat="user in vm.users" ng-class="{active: vm.isSelected(user)}" ng-click="vm.selectUser(user)">
+          <md-list-item class="md-2-line userlist-item" ng-repeat="user in main.users" ng-class="{active: main.isSelected(user)}" ng-click="main.selectUser(user)">
             <img ng-src="assets/img/Dad-icon.png" class="md-avatar" alt="{{::user.email}}" />
             <div class="md-list-item-text">
               <h3>{{ ::user.email }}</h3>
@@ -35,35 +35,14 @@
     <md-content flex layout="column">
       <md-toolbar class="md-whiteframe-1dp site-toolbar">
           <div class="md-toolbar-tools">
-              <md-button ng-click="vm.toggleSidenav('left')" hide-gt-sm class="md-icon-button">
+              <md-button ng-click="main.toggleSidenav('left')" hide-gt-sm class="md-icon-button">
                   <md-icon aria-label="Menu" md-svg-icon="assets/img/menu.svg"></md-icon>
               </md-button>
-              <h1>Crispy</h1>
+              <h1>Crispy Chat</h1>
               <span flex></span>
-              <a class="md-button md-raised md-warn md-ink-ripple" ng-click="vm.logout()" href>Logout</a>
+              <a class="md-button md-raised md-warn md-ink-ripple" ng-click="main.logout()" href>Logout</a>
           </div>
       </md-toolbar>
-      <md-content flex layout="row" chat-scroll="vm.messages">
-        <div style="width: 100%; position: absolute">
-          <div ng-repeat="message in vm.messages">
-              <md-card ng-class="{'message-typing': message.typing}">
-                  <md-card-content>
-                      {{message.date | date:'HH:mm'}} &nbsp; {{message.user.email}}: {{message.message}}
-                  </md-card-content>
-              </md-card>
-              <br />
-          </div>
-        </div>
-      </md-content>
-      <md-divider ></md-divider>
-      <form ng-submit="vm.send()">
-        <md-content layout="row" layout-align="center center" layout-padding md-theme="default">
-          <md-input-container flex>
-              <label>Click to type a message</label>
-              <input ng-model="vm.message" ng-change="vm.sendLetter()">
-          </md-input-container>
-          <md-button type="submit" class="md-raised md-primary">Send</md-button>
-        </md-content>
-      </form>
+      <div ui-view layout="column" flex></div>
   </md-content>
 </section>

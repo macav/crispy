@@ -15,16 +15,23 @@ describe('Crispy main module', function() {
     {_id: 2, email: 'user2'},
     {_id: 3, email: 'user3'}
   ];
+  var mdDialogMock = {
+    show: function(data) { return this; },
+    then: function(callback) {
+      callback('new status');
+    }
+  };
 
   beforeEach(inject(function($controller, $rootScope, _$httpBackend_) {
     scope = $rootScope.$new();
     $httpBackend = _$httpBackend_;
     $httpBackend.whenGET("auth/login.html").respond({});
     $httpBackend.whenGET("main/main.html").respond({});
+    $httpBackend.whenGET("conversation/conversation.html").respond({});
     $httpBackend.whenGET('/api/users').respond(usersData);
     $httpBackend.whenGET('/api/messages?user=1').respond([]);
     socketMock = new sockMock($rootScope);
-    ctrl = $controller('MainCtrl', {$scope: scope, mySocket: socketMock, users: {data: usersData, status: 200}});
+    ctrl = $controller('MainCtrl', {$scope: scope, mySocket: socketMock, users: {data: usersData, status: 200}, $mdDialog: mdDialogMock});
   }));
 
   describe('Main controller', function(){
@@ -54,6 +61,20 @@ describe('Crispy main module', function() {
     it("should not add user if he's already in the list", function() {
       socketMock.receive('userLogin', usersData[2]);
       expect(ctrl.users.length).toBe(3);
+    });
+
+    it('should save user status', function() {
+      ctrl.setStatus().then(function(status) {
+        $httpBackend.expectPATCH('/api/profile').respond({status: status});
+        $httpBackend.flush();
+        expect(ctrl.userStatus).toBe(status);
+        $httpBackend.verifyNoOutstandingRequest();
+      });
+    });
+
+    it('should receive status updates and update users status', function() {
+      socketMock.receive('statusUpdate', {user: usersData[1], status: 'test status'});
+      expect(usersData[1].status).toBe('test status');
     });
 
   });

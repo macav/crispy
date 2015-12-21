@@ -18,7 +18,7 @@
           <md-list-item ng-if="!main.users.length">
             <img ng-src="assets/img/Zombie-icon.png" class="md-avatar" alt="{{::user.email}}" />
             <div class="md-list-item-text">
-              Forever alone..
+              All alone..
             </div>
           </md-list-item>
           <md-list-item class="md-2-line userlist-item" ng-repeat="user in main.users" ng-class="{active: main.isSelected(user)}" ng-click="main.selectUser(user)">

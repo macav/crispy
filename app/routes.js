@@ -125,7 +125,6 @@ var jwt = require('jsonwebtoken');
                     res.send(err);
 
                 message.user = req.user;
-                var ObjectId = require('mongoose').Types.ObjectId;
                 var users = app.get('activeUsers');
                 for (var i = 0; i < users.length; i++) {
                   if (users[i]._id == req.body.recipient) {
@@ -159,6 +158,25 @@ var jwt = require('jsonwebtoken');
         router.get('/users', function(req, res) {
           require('./utils/parsers')(app).parseActiveUsers(req.user, function(users) {
             res.status(200).json(users);
+          });
+        });
+
+        router.route('/profile')
+        .patch(function(req, res) {
+          req.user.status = req.body.status;
+          req.user.save(function(err, user) {
+            if (err) {
+              res.status(500).json({success: false});
+            }
+            var users = app.get('activeUsers');
+            for (var i = 0; i < users.length; i++) {
+              if (users[i]._id.equals(req.user._id)) {
+                users[i].status = req.user.status;
+              } else {
+                users[i].socket.emit('statusUpdate', {user: req.user, status: req.user.status});
+              }
+            }
+            res.status(200).json({success: true, status: req.body.status});
           });
         });
 

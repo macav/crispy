@@ -60,7 +60,7 @@
           user.unread = angular.isDefined(user.unread) ? user.unread + 1 : 1;
           $mdToast.show({
             controller: 'ToastCtrl',
-            templateUrl: 'main/message-notification-template.html',
+            templateUrl: 'conversation/message-notification-template.html',
             hideDelay: 3000,
             resolve: {
               message: function() {

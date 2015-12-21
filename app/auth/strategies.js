@@ -38,7 +38,7 @@ module.exports = function(passport) {
                         }
                     });
                 }
-                var token = jwt.sign({userId: user._id, email: user.email}, jwtConfig.secret, { expiresIn: jwtConfig.expiresIn });
+                var token = jwt.sign({userId: user._id, email: user.email, status: user.status}, jwtConfig.secret, { expiresIn: jwtConfig.expiresIn });
                 return done(null, token, user);
             });
         });
@@ -75,7 +75,7 @@ module.exports = function(passport) {
                         }
                     });
                 }
-                var token = jwt.sign({userId: user._id, email: user.email}, jwtConfig.secret, { expiresIn: jwtConfig.expiresIn });
+                var token = jwt.sign({userId: user._id, email: user.email, status: user.status}, jwtConfig.secret, { expiresIn: jwtConfig.expiresIn });
                 return done(null, token, user);
             });
         });
@@ -92,7 +92,7 @@ module.exports = function(passport) {
                     if (!user.validPassword(password)) {
                         return done(null, false);
                     }
-                    var token = jwt.sign({userId: user._id, email: user.email}, jwtConfig.secret, { expiresIn: jwtConfig.expiresIn });
+                    var token = jwt.sign({userId: user._id, email: user.email, status: user.status}, jwtConfig.secret, { expiresIn: jwtConfig.expiresIn });
                     return done(null, token, user);
                 }
             });

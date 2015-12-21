@@ -14,15 +14,16 @@ describe('Crispy auth module', function() {
       password: 'testpass',
       token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEyMzQ1LCJlbWFpbCI6InRlc3QxIiwiaWF0IjoxNDUwNzEyMDQ3LCJleHAiOjE0NTEzMTY4NDd9.iakUF8_f7HXiOOvEKiBVsKPckyf6mlpJjcDcQ5zbCxg'
     };
-    var authService, $httpBackend, socketMock, mockDependency;
+    var authService, $httpBackend, socketMock, profileService;
     beforeEach(function() {
       socketMock = new sockMock({$apply: function() {}});
       module(function($provide) {
         $provide.value('mySocket', socketMock);
       });
     });
-    beforeEach(inject(function(_AuthService_, _$httpBackend_) {
+    beforeEach(inject(function(_ProfileService_, _AuthService_, _$httpBackend_) {
       authService = _AuthService_;
+      profileService = _ProfileService_;
       $httpBackend = _$httpBackend_;
     }));
 
@@ -49,7 +50,7 @@ describe('Crispy auth module', function() {
       });
 
       it('should set user data', function() {
-        expect(authService.getUserData().email).toBe(userData.username);
+        expect(profileService.getUserData().email).toBe(userData.username);
       });
 
       it('should set authentication token', function() {
@@ -70,7 +71,7 @@ describe('Crispy auth module', function() {
       });
 
       it('should set user data', function() {
-        expect(authService.getUserData()).toBeUndefined();
+        expect(profileService.getUserData()).toBeUndefined();
       });
 
       it('should set authentication token', function() {

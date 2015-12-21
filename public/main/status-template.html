@@ -1,28 +1,30 @@
 <md-dialog aria-label="Set status">
-  <md-toolbar>
-    <div class="md-toolbar-tools">
-      <h2>Set status</h2>
+  <form ng-submit="vm.ok()" novalidate>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Set status</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="vm.cancel()">
+          <md-icon md-svg-src="assets/img/close.svg" aria-label="Close dialog"></md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content layout-padding>
+      <div class="md-dialog-content">
+        <md-input-container flex>
+            <label>Type your status</label>
+            <input ng-model="vm.status" md-autofocus>
+        </md-input-container>
+      </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
       <span flex></span>
-      <md-button class="md-icon-button" ng-click="vm.cancel()">
-        <md-icon md-svg-src="assets/img/close.svg" aria-label="Close dialog"></md-icon>
+      <md-button type="submit" class="md-primary md-raised">
+       OK
       </md-button>
-    </div>
-  </md-toolbar>
-  <md-dialog-content layout-padding>
-    <div class="md-dialog-content">
-      <md-input-container flex>
-          <label>Type your status</label>
-          <input ng-model="vm.status" md-autofocus>
-      </md-input-container>
-    </div>
-  </md-dialog-content>
-  <md-dialog-actions layout="row">
-    <span flex></span>
-    <md-button ng-click="vm.ok()" class="md-primary md-raised">
-     OK
-    </md-button>
-    <md-button ng-click="vm.cancel()" style="margin-right:20px;">
-      Cancel
-    </md-button>
-  </md-dialog-actions>
+      <md-button ng-click="vm.cancel()" style="margin-right:20px;">
+        Cancel
+      </md-button>
+    </md-dialog-actions>
+  </form>
 </md-dialog>

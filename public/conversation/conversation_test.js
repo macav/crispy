@@ -31,7 +31,7 @@ describe('Crispy conversation module', function() {
       scope = $rootScope.$new();
       $httpBackend = _$httpBackend_;
       $httpBackend.whenGET('conversation/conversation.html').respond({});
-      $httpBackend.whenGET('main/message-notification-template.html').respond({});
+      $httpBackend.whenGET('conversation/message-notification-template.html').respond({});
       socketMock = new sockMock($rootScope);
       ctrl = $controller('ConversationCtrl', {$scope: scope, users: {data: usersData, status: 200}, messages: {data: [], status: 200}, mySocket: socketMock, $stateParams: {user: usersData[1]._id}});
     }));

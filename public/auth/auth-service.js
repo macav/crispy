@@ -1,8 +1,7 @@
 (function() {
   'use strict';
-  function AuthService($http, $window, $interval, mySocket, jwtHelper) {
+  function AuthService($http, $window, $interval, mySocket, jwtHelper, ProfileService) {
       var _isAuthenticated = false;
-      var _userData;
       var _accessToken;
       var _refreshTokenInterval;
       var socketHandler;
@@ -29,14 +28,18 @@
               $window.localStorage.accessToken = _accessToken;
               _refreshTokenInterval = $interval(this.refreshToken, 3600000);
               var tokenPayload = jwtHelper.decodeToken(token);
-              _userData = {
+              var userData = {
                   email: tokenPayload.email,
-                  id: tokenPayload.userId
+                  id: tokenPayload.userId,
+                  status: tokenPayload.status
               };
+              if (!ProfileService.load()) {
+                ProfileService.setUserData(userData);
+              }
               mySocket.connect();
-              mySocket.emit('login', _userData.id);
+              mySocket.emit('login', userData.id);
               socketHandler = mySocket.on('reconnect', function() {
-                  mySocket.emit('login', _userData.id);
+                  mySocket.emit('login', userData.id);
               });
           },
           logout: function() {
@@ -55,9 +58,6 @@
           isAuthenticated: function() {
               return _isAuthenticated;
           },
-          getUserData: function() {
-              return _userData;
-          },
           getActiveUsers: function() {
               return $http.get('/api/users');
           },
@@ -73,7 +73,7 @@
           }
       };
   }
-  AuthService.$inject = ['$http', '$window', '$interval', 'mySocket', 'jwtHelper'];
+  AuthService.$inject = ['$http', '$window', '$interval', 'mySocket', 'jwtHelper', 'ProfileService'];
 
   angular.module('crispy.auth', [
                'ui.router',

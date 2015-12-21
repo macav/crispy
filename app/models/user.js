@@ -8,7 +8,8 @@ var UserSchema = new mongoose.Schema({
     password: String,
     token: {type: String, required: false},
     facebookId: String,
-    googleId: String
+    googleId: String,
+    status: String
 });
 
 UserSchema.methods.generateHash = function(password) {

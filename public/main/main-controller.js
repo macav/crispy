@@ -12,7 +12,7 @@
   }
   StatusDialogController.$inject = ['status', '$mdDialog'];
 
-  function MainCtrl(users, $state, $stateParams, $mdSidenav, mySocket, AuthService, MessageService, globalData, $timeout, $mdToast, ngAudio, $mdDialog, $mdMedia) {
+  function MainCtrl(users, $state, $stateParams, $mdSidenav, mySocket, AuthService, MessageService, $timeout, $mdToast, ngAudio, $mdDialog, $mdMedia, ProfileService) {
     this.toggleSidenav = function(menuId) {
         $mdSidenav(menuId).toggle();
     };
@@ -35,7 +35,7 @@
 
     vm.users = users.data;
 
-    vm.userStatus = 'Som super';
+    vm.userStatus = ProfileService.get('status');
     mySocket.on('userLogin', function(data) {
       if (!_.findWhere(vm.users, {_id: data._id})) {
           vm.users.push(data);
@@ -47,9 +47,15 @@
         vm.users.splice(idx, 1);
       }
     });
+    mySocket.on('statusUpdate', function(data) {
+      var user = _.findWhere(vm.users, {_id: data.user._id});
+      if (user) {
+        user.status = data.status;
+      }
+    });
 
     vm.setStatus = function(evt) {
-      $mdDialog.show({
+      var promise = $mdDialog.show({
         controller: StatusDialogController,
         controllerAs: 'vm',
         templateUrl: 'main/status-template.html',
@@ -62,13 +68,17 @@
           }
         },
         openFrom: '#status'
-      })
-      .then(function(status) {
-        vm.userStatus = status;
       });
+      promise.then(function(status) {
+        ProfileService.setStatus(status).then(function(response) {
+          vm.userStatus = status;
+          ProfileService.set('status', status);
+        });
+      });
+      return promise;
     };
   }
-  MainCtrl.$inject = ['users', '$state', '$stateParams', '$mdSidenav', 'mySocket', 'AuthService', 'MessageService', 'globalData', '$timeout', '$mdToast', 'ngAudio', '$mdDialog', '$mdMedia'];
+  MainCtrl.$inject = ['users', '$state', '$stateParams', '$mdSidenav', 'mySocket', 'AuthService', 'MessageService', '$timeout', '$mdToast', 'ngAudio', '$mdDialog', '$mdMedia', 'ProfileService'];
   MainCtrl.resolve = {
     users: ['AuthService', function(AuthService) {
       return AuthService.getActiveUsers();

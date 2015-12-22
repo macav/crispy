@@ -53,6 +53,10 @@
         user.status = data.status;
       }
     });
+    mySocket.on('forceLogout', function() {
+      $mdToast.show($mdToast.simple().textContent('You logged in from other device.').position('bottom right'));
+      vm.logout();
+    });
 
     vm.setStatus = function(evt) {
       var promise = $mdDialog.show({

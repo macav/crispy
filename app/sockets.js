@@ -15,9 +15,12 @@ module.exports = function(app, server) {
         socket.user = user;
         user.socket = socket;
         var activeUsers = app.get('activeUsers');
-        if (utils.findById(activeUsers, user._id) === null) {
-          app.get('activeUsers').push(user);
+        var existingUser;
+        if ( (existingUser = utils.findById(activeUsers, user._id)) !== null) {
+          existingUser.socket.emit('forceLogout');
+          existingUser.socket.disconnect();
         }
+        app.get('activeUsers').push(user);
 
         function emitUserLogin(activeUser) {
           Message.find({user: user._id, recipient: activeUser._id, read: false}, function(err, msgs) {

@@ -150,6 +150,26 @@ var jwt = require('jsonwebtoken');
         });
 
         router.route('/profile')
+        .put(function(req, res) {
+          req.user.first_name = req.body.first_name;
+          req.user.last_name = req.body.last_name;
+          if (req.body.password) {
+            req.user.password = req.user.generateHash(req.body.password);
+          }
+          req.user.save(function(err, user) {
+            if (err) {
+              res.status(500).json({success: false});
+            }
+            var users = app.get('activeUsers');
+            for (var i = 0; i < users.length; i++) {
+              if (users[i]._id.equals(req.user._id)) {
+                users[i].first_name = req.user.first_name;
+                users[i].last_name = req.user.last_name;
+              }
+            }
+            res.status(200).json(req.user);
+          });
+        })
         .patch(function(req, res) {
           req.user.status = req.body.status;
           req.user.save(function(err, user) {

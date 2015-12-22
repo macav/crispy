@@ -1,14 +1,4 @@
 /* app css stylesheet */
-md-sidenav {
-  width: 200px;
-}
-
-md-sidenav.md-locked-open,
-md-sidenav.md-closed.md-locked-open-add-active {
-  max-width: 200px;
-  min-width: 200px;
-}
-
 .userlist .active {
   background-color: #3f51b5;
 }
@@ -18,8 +8,9 @@ md-sidenav.md-closed.md-locked-open-add-active {
   color: rgba(255, 255, 255, 0.87);
 }
 
-md-input-container.md-docs-dark-theme label {
-  color: rgba(255, 255, 255, 0.7);
+.userlist .active .badge {
+  color: #3f51b5;
+  background-color: rgba(255, 255, 255, 0.87);
 }
 
 .img-circle {
@@ -66,11 +57,6 @@ md-list-item.md-2-line > .md-no-style .md-list-item-text h3 {
   height: 20px;
   line-height: 20px;
   width: 20px;
-}
-
-.userlist .active .badge {
-  color: #3f51b5;
-  background-color: rgba(255, 255, 255, 0.87);
 }
 
 .message-typing {

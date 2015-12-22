@@ -64,7 +64,7 @@
         clickOutsideToClose: true,
         resolve: {
           status: function() {
-            return vm.userStatus;
+            return vm.userData.status;
           }
         },
         openFrom: '#status'

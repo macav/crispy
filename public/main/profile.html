@@ -1,0 +1,30 @@
+<form ng-submit="profile.save()" novalidate>
+  <md-content layout-padding layout="row" layout-align="center">
+    <div layout="column">
+      {{profile.message}}
+      <md-input-container flex>
+        <label>E-mail:</label>
+        <input type="email" readonly ng-model="profile.data.email" autofocus>
+      </md-input-container>
+      <md-input-container flex>
+        <label>Password</label>
+        <input type="password" ng-model="profile.data.password">
+      </md-input-container>
+      <md-input-container flex>
+        <label>Password check</label>
+        <input type="password" ng-model="profile.data.password2">
+      </md-input-container>
+      <md-input-container flex>
+        <label>First name</label>
+        <input ng-model="profile.data.first_name">
+      </md-input-container>
+      <md-input-container flex>
+        <label>Last name</label>
+        <input ng-model="profile.data.last_name">
+      </md-input-container>
+      <div layout="row" layout-align="center center">
+        <md-button type="submit" class="md-raised md-primary">Save changes</md-button>
+      </div>
+    </div>
+  </md-content>
+</form>

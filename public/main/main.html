@@ -2,11 +2,11 @@
     <md-sidenav layout="column" class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="$mdMedia('gt-sm')">
       <md-content layout="column" layout-align="center center" layout-padding>
         <img src="{{::main.userData.gender ? 'assets/img/Girl-icon.png' : 'assets/img/Dad-icon.png'}}" class="img-circle" alt="Profile picture"/>
-        <md-button class="profile-edit-button">
+        <md-button class="profile-edit-button" ui-sref="main.profile">
           <md-tooltip md-direction="top">
             Edit your profile
           </md-tooltip>
-          {{::main.userData.name}}
+          {{main.userData.name}}
         </md-button>
         <md-button ng-click="main.setStatus($event)" class="status-edit-button">
           {{main.userData.status || '-- Set your status --'}}
@@ -22,7 +22,7 @@
             </div>
           </md-list-item>
           <md-list-item class="md-2-line userlist-item" ng-repeat="user in main.users" ng-class="{active: main.isSelected(user)}" ng-click="main.selectUser(user)">
-            <img ng-src="assets/img/Dad-icon.png" class="md-avatar" alt="{{::user.email}}" />
+            <img ng-src="{{::user.gender ? 'assets/img/Girl-icon.png' : 'assets/img/Dad-icon.png'}}" class="md-avatar" alt="{{::user.email}}" />
             <div class="md-list-item-text">
               <h3>{{ ::user.first_name }} {{::user.last_name}}</h3>
               <p>{{ user.status || 'No status'}}</p>

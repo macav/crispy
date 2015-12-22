@@ -35,7 +35,7 @@
 
     vm.users = users.data;
 
-    vm.userStatus = ProfileService.get('status');
+    vm.userData = ProfileService.getUserData();
     mySocket.on('userLogin', function(data) {
       if (!_.findWhere(vm.users, {_id: data._id})) {
           vm.users.push(data);
@@ -71,7 +71,7 @@
       });
       promise.then(function(status) {
         ProfileService.setStatus(status).then(function(response) {
-          vm.userStatus = status;
+          vm.userData.status = status;
           ProfileService.set('status', status);
         });
       });

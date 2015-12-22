@@ -23,9 +23,10 @@ describe('Crispy auth module', function() {
       ctrl = $controller('LoginCtrl', {$scope: scope});
       $httpBackend = _$httpBackend_;
       $httpBackend.whenGET('auth/login.html').respond({});
-      $httpBackend.whenGET('main/main.html').respond({});
       $httpBackend.whenGET('conversation/conversation.html').respond({});
-      $httpBackend.whenGET('/api/users').respond([]);
+    }));
+    afterEach(inject(function(AuthService) {
+      AuthService.logout();
     }));
 
     it('should have controller defined', inject(function($controller, $rootScope) {
@@ -47,6 +48,8 @@ describe('Crispy auth module', function() {
       scope.login = userData;
       scope.loginUser();
       $httpBackend.expectPOST('/auth/local').respond({success: true, user: userData.username, userId: 1, token: userData.token});
+      $httpBackend.expectGET('/api/users').respond([]);
+      $httpBackend.expectGET('main/main.html').respond({});
       $httpBackend.flush();
       expect(scope.message).not.toBeDefined();
       expect($state.current.name).toBe('main.conversation');

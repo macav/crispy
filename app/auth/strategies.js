@@ -5,6 +5,9 @@ var User           = require('../models/user');
 var jwt            = require('jsonwebtoken');
 var jwtConfig      = require('../../config/jwt.js');
 
+var getProfile = function(user) {
+  return {userId: user._id, email: user.email, status: user.status, first_name: user.first_name, last_name: user.last_name, gender: user.gender};
+};
 module.exports = function(passport) {
     passport.use(new GoogleStrategy({
         clientID: '202511624233-8s38iqin9lu9v0oqeqalglcm28e69dk0.apps.googleusercontent.com',
@@ -18,13 +21,16 @@ module.exports = function(passport) {
                     user.last_name = profile.name.familyName;
                     user.first_name = profile.name.givenName;
                     var email;
-                    for (var i = 0; i < profile._json.emails.length; i++) {
-                        if (profile._json.emails[i].type === 'account')
-                            email = profile._json.emails[i].value;
+                    if (profile._json.emails) {
+                      for (var i = 0; i < profile._json.emails.length; i++) {
+                          if (profile._json.emails[i].type === 'account')
+                              email = profile._json.emails[i].value;
+                      }
                     }
                     user.email = email;
                     user.googleId = profile.id;
                     user.token = accessToken;
+                    user.gender = profile.gender === 'male' ? false : true;
                     user.save(function(err, user) {
                         if (err) {
                             console.log('error saving user', err);
@@ -38,7 +44,7 @@ module.exports = function(passport) {
                         }
                     });
                 }
-                var token = jwt.sign({userId: user._id, email: user.email, status: user.status}, jwtConfig.secret, { expiresIn: jwtConfig.expiresIn });
+                var token = jwt.sign(getProfile(user), jwtConfig.secret, { expiresIn: jwtConfig.expiresIn });
                 return done(null, token, user);
             });
         });
@@ -58,6 +64,7 @@ module.exports = function(passport) {
                     if (profile.emails.length) {
                         user.email = profile.emails[0].value;
                     }
+                    user.gender = profile.gender === 'male' ? false : true;
                     user.token = accessToken;
                     user.facebookId = profile.id;
                     user.save(function(err, user) {
@@ -75,7 +82,7 @@ module.exports = function(passport) {
                         }
                     });
                 }
-                var token = jwt.sign({userId: user._id, email: user.email, status: user.status}, jwtConfig.secret, { expiresIn: jwtConfig.expiresIn });
+                var token = jwt.sign(getProfile(user), jwtConfig.secret, { expiresIn: jwtConfig.expiresIn });
                 return done(null, token, user);
             });
         });
@@ -92,7 +99,7 @@ module.exports = function(passport) {
                     if (!user.validPassword(password)) {
                         return done(null, false);
                     }
-                    var token = jwt.sign({userId: user._id, email: user.email, status: user.status}, jwtConfig.secret, { expiresIn: jwtConfig.expiresIn });
+                    var token = jwt.sign(getProfile(user), jwtConfig.secret, { expiresIn: jwtConfig.expiresIn });
                     return done(null, token, user);
                 }
             });

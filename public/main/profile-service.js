@@ -32,6 +32,9 @@
           _userData = JSON.parse($window.localStorage.profile);
           return true;
         },
+        clear: function() {
+          delete $window.localStorage.profile;
+        },
         setUserData: function(data) {
           _userData = data;
           this.save();

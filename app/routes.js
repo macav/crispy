@@ -8,18 +8,6 @@ var jwt = require('jsonwebtoken');
 
     module.exports = function(app, router) {
 
-        router.route('/register')
-        .post(function(req, res) {
-            var user = new User();
-            user.email = req.body.username;
-            user.password = user.generateHash(req.body.password);
-            user.save(function(err, user) {
-                if (err) {
-                    res.send(err);
-                }
-                res.status(201).json(user);
-            });
-        });
         // authentication middleware
         router.use(function(req, res, next) {
             var token;

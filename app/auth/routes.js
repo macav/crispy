@@ -6,7 +6,7 @@ module.exports = function(app) {
     app.get('/auth/google', function(req, res, next) {
         var passport = req._passport.instance;
 
-        passport.authenticate('google', {scope: 'https://www.googleapis.com/auth/plus.login'}, function(err, user, info) {
+        passport.authenticate('google', {scope: ['https://www.googleapis.com/auth/plus.login', 'email']}, function(err, user, info) {
 
         })(req,res,next);
     });
@@ -79,5 +79,33 @@ module.exports = function(app) {
             var refreshed_token = jwt.sign(profile, jwtConfig.secret, { expiresIn: jwtConfig.expiresIn });
             res.json({token: refreshed_token});
         });
+    });
+    app.post('/auth/register', function(req, res, next) {
+      User.findOne({email: req.body.email}, function(err, user) {
+        if (err) {
+          return res.status(500).json({message: 'There was unspecified error'});
+        }
+        if (user) {
+          return res.status(400).json({message: 'User with this e-mail is already registered.'});
+        }
+        if (!req.body.email) {
+          return res.status(400).json({message: 'E-mail is not defined'});
+        }
+        if (!req.body.password) {
+          return res.status(400).json({message: 'Password has not been provided'});
+        }
+        var user = new User();
+        user.first_name = req.body.first_name;
+        user.last_name = req.body.last_name;
+        user.gender = req.body.gender;
+        user.email = req.body.email;
+        user.password = user.generateHash(req.body.password);
+        user.save(function(err, user) {
+            if (err) {
+                res.send(err);
+            }
+            res.status(201).json(user);
+        });
+      });
     });
 };

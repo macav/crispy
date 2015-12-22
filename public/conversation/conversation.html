@@ -4,7 +4,7 @@
       <div ng-repeat="message in msg.messages">
           <md-card ng-class="{'message-typing': message.typing}">
               <md-card-content>
-                  {{message.date | date:'HH:mm'}} &nbsp; {{message.user.email}}: {{message.message}}
+                  {{::message.date | date:'HH:mm'}} &nbsp; {{::message.user.first_name + ' ' + message.user.last_name}}: {{message.message}}
               </md-card-content>
           </md-card>
           <br />

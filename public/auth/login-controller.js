@@ -1,12 +1,11 @@
 (function() {
   'use strict';
 
-  function LoginCtrl($scope, $cookies, $state, mySocket, AuthService, globalData) {
+  function LoginCtrl($scope, $state, AuthService) {
     $scope.login = {};
     $scope.loginUser = function() {
       AuthService.authenticate($scope.login.username, $scope.login.password).then(function(result) {
         if (AuthService.isAuthenticated()) {
-          globalData.users = result.data.users;
           $state.go('main.conversation');
         } else {
           $scope.message = result.data.message;
@@ -16,21 +15,18 @@
       });
     };
   }
-  LoginCtrl.$inject = ['$scope', '$cookies', '$state', 'mySocket', 'AuthService', 'globalData'];
+  LoginCtrl.$inject = ['$scope', '$state', 'AuthService'];
 
-  function LoginCallbackCtrl($scope, $state, $window, AuthService, $location, globalData) {
+  function LoginCallbackCtrl($state, AuthService, $location) {
     var search = $location.search();
     if (search.token) {
       AuthService.authenticateToken(search.token);
-      AuthService.getActiveUsers().then(function(response) {
-        globalData.users = response.data;
-        $state.go('main.conversation');
-      });
+      $state.go('main.conversation');
     } else {
       $state.go('login');
     }
   }
-  LoginCallbackCtrl.$inject = ['$scope', '$state', '$window', 'AuthService', '$location', 'globalData'];
+  LoginCallbackCtrl.$inject = ['$state', 'AuthService', '$location'];
 
   function config($stateProvider, $urlRouterProvider) {
     $urlRouterProvider.otherwise('/login');
@@ -44,7 +40,7 @@
     $urlRouterProvider.rule(function($injector, $location) {
       var $window = $injector.get('$window');
       var $state = $injector.get('$state');
-      if (!$window.localStorage.accessToken && ['/login', '/login/callback'].indexOf($location.path()) === -1) {
+      if (!$window.localStorage.accessToken && ['/login', '/login/callback', '/register'].indexOf($location.path()) === -1) {
         return $state.get('login').url;
       }
     });
@@ -62,12 +58,12 @@
   }
   config.$inject = ['$stateProvider', '$urlRouterProvider'];
 
-  function AuthModuleInit($window, AuthService, globalData) {
+  function AuthModuleInit($window, AuthService) {
     if ($window.localStorage.accessToken) {
       AuthService.authenticateToken($window.localStorage.accessToken);
     }
   }
-  AuthModuleInit.$inject = ['$window', 'AuthService', 'globalData'];
+  AuthModuleInit.$inject = ['$window', 'AuthService'];
 
   angular.module('crispy.auth')
   .config(config)

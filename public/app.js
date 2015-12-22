@@ -1,17 +1,12 @@
 (function() {
   'use strict';
 
-  function appConfig($stateProvider, $urlRouterProvider, $mdThemingProvider) {
-    $stateProvider
-      .state('register', {
-        url: "/register",
-        templateUrl: "auth/register.html"
-      });
+  function appConfig($mdThemingProvider) {
       $mdThemingProvider.theme('default')
       .primaryPalette('indigo')
       .accentPalette('blue');
   }
-  appConfig.$inject = ['$stateProvider', '$urlRouterProvider', '$mdThemingProvider'];
+  appConfig.$inject = ['$mdThemingProvider'];
 
   angular.module('crispy', [
     'crispy.main',

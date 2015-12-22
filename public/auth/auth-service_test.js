@@ -26,6 +26,9 @@ describe('Crispy auth module', function() {
       profileService = _ProfileService_;
       $httpBackend = _$httpBackend_;
     }));
+    afterEach(function() {
+      authService.logout();
+    });
 
     describe('Successful authentication', function() {
       beforeEach(function() {

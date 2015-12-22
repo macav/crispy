@@ -1,0 +1,35 @@
+<form ng-submit="vm.registerUser()" novalidate>
+  <md-content layout-padding layout="row" layout-align="center">
+    <div layout="column">
+      {{vm.message}}
+      <md-input-container flex>
+        <label>E-mail:</label>
+        <input type="email" ng-model="vm.data.email" autofocus>
+      </md-input-container>
+      <md-input-container flex>
+        <label>Password</label>
+        <input type="password" ng-model="vm.data.password">
+      </md-input-container>
+      <md-input-container flex>
+        <label>Password check</label>
+        <input type="password" ng-model="vm.data.password2">
+      </md-input-container>
+      <md-input-container flex>
+        <label>First name</label>
+        <input ng-model="vm.data.first_name">
+      </md-input-container>
+      <md-input-container flex>
+        <label>Last name</label>
+        <input ng-model="vm.data.last_name">
+      </md-input-container>
+      <md-radio-group ng-model="vm.data.gender">
+        <md-radio-button value="0" class="md-primary">Male</md-radio-button>
+        <md-radio-button value="1">Female</md-radio-button>
+      </md-radio-group>
+      <div layout="row" layout-align="center center">
+        <md-button type="submit" class="md-raised md-primary">Register</md-button>
+        <md-button ng-href="#/login" class="md-raised">Back to login</md-button>
+      </div>
+    </div>
+  </md-content>
+</form>

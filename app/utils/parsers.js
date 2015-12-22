@@ -3,6 +3,9 @@ var Message = require('../models/message');
 module.exports = function(app) {
   return {
     parseActiveUsers: function(user, callback) {
+      if (!user) {
+        return;
+      }
       var filtered = [];
       var active = app.get('activeUsers');
       Message.find({recipient: user._id, read: false}, function(err, msgs) {

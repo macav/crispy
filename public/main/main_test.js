@@ -9,7 +9,7 @@ describe('Crispy main module', function() {
   beforeEach(module('crispy.main'));
   beforeEach(module('crispy.auth'));
 
-  var scope, ctrl, socketMock, $httpBackend;
+  var scope, ctrl, socketMock, $httpBackend, authService;
   var usersData = [
     {_id: 1, email: 'user1'},
     {_id: 2, email: 'user2'},
@@ -21,17 +21,24 @@ describe('Crispy main module', function() {
       callback('new status');
     }
   };
+  var ProfileServiceMock = {
+    getUserData: function() {
+      return {};
+    },
+    setStatus: function() { return {then: function(callback) { callback(); }}},
+    set: function() {}
+  };
 
-  beforeEach(inject(function($controller, $rootScope, _$httpBackend_) {
+  beforeEach(inject(function($controller, $rootScope, _$httpBackend_, _AuthService_) {
     scope = $rootScope.$new();
+    authService = _AuthService_;
     $httpBackend = _$httpBackend_;
     $httpBackend.whenGET("auth/login.html").respond({});
     $httpBackend.whenGET("main/main.html").respond({});
     $httpBackend.whenGET("conversation/conversation.html").respond({});
     $httpBackend.whenGET('/api/users').respond(usersData);
-    $httpBackend.whenGET('/api/messages?user=1').respond([]);
     socketMock = new sockMock($rootScope);
-    ctrl = $controller('MainCtrl', {$scope: scope, mySocket: socketMock, users: {data: usersData, status: 200}, $mdDialog: mdDialogMock});
+    ctrl = $controller('MainCtrl', {$scope: scope, mySocket: socketMock, users: {data: usersData, status: 200}, $mdDialog: mdDialogMock, ProfileService: ProfileServiceMock});
   }));
 
   describe('Main controller', function(){
@@ -65,9 +72,7 @@ describe('Crispy main module', function() {
 
     it('should save user status', function() {
       ctrl.setStatus().then(function(status) {
-        $httpBackend.expectPATCH('/api/profile').respond({status: status});
-        $httpBackend.flush();
-        expect(ctrl.userStatus).toBe(status);
+        expect(ctrl.userData.status).toBe(status);
         $httpBackend.verifyNoOutstandingRequest();
       });
     });

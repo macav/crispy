@@ -31,7 +31,11 @@
               var userData = {
                   email: tokenPayload.email,
                   id: tokenPayload.userId,
-                  status: tokenPayload.status
+                  status: tokenPayload.status,
+                  gender: tokenPayload.gender,
+                  first_name: tokenPayload.first_name,
+                  last_name: tokenPayload.last_name,
+                  name: tokenPayload.first_name + ' ' + tokenPayload.last_name
               };
               if (!ProfileService.load()) {
                 ProfileService.setUserData(userData);
@@ -50,6 +54,7 @@
               _isAuthenticated = false;
               delete $http.defaults.headers.common.Authorization;
               delete $window.localStorage.accessToken;
+              ProfileService.clear();
               mySocket.disconnect();
               if (socketHandler) {
                   socketHandler();
@@ -70,6 +75,9 @@
                   $http.defaults.headers.common.Authorization = 'JWT ' + _accessToken;
                   $window.localStorage.accessToken = _accessToken;
               });
+          },
+          register: function(data) {
+            return $http.post('/auth/register', data);
           }
       };
   }

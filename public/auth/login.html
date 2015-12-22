@@ -11,7 +11,10 @@
         <input type="password" ng-model="login.password">
       </md-input-container>
       <div layout="row" layout-align="center center">
-        <md-button type="submit" class="md-raised">Login</md-button>
+        <div layout="column">
+          <md-button type="submit" class="md-raised">Login</md-button>
+          <md-button ng-href="#/register" class="md-raised">Register</md-button>
+        </div>
         <md-button ng-href="/auth/google" class="md-raised md-warn">Login with Google</md-button>
         <md-button ng-href="/auth/facebook" class="md-raised md-primary">Login with Facebook</md-button>
       </div>

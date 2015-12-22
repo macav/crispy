@@ -64,7 +64,7 @@
             hideDelay: 3000,
             resolve: {
               message: function() {
-                return data.user.email + ': ' + data.message;
+                return data.user.first_name + ' ' + data.user.last_name + ': ' + data.message;
               }
             },
             controllerAs: 'vm',

@@ -9,7 +9,8 @@ var UserSchema = new mongoose.Schema({
     token: {type: String, required: false},
     facebookId: String,
     googleId: String,
-    status: String
+    status: String,
+    gender: {type: Boolean, default: false}
 });
 
 UserSchema.methods.generateHash = function(password) {

@@ -112,3 +112,10 @@ md-toast.md-message-theme .md-toast-content > a {
 .new-message md-input-container .md-errors-spacer {
   min-height: inherit;
 }
+
+.error-message {
+  color: red;
+  font-size: 13px;
+  text-align: center;
+  margin-bottom: 20px;
+}

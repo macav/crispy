@@ -113,3 +113,9 @@ $text-color-muted: rgba(120, 120, 120, 0.5);
     }
   }
 }
+.error-message {
+  color: red;
+  font-size: 13px;
+  text-align: center;
+  margin-bottom: 20px;
+}

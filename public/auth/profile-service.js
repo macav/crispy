@@ -43,6 +43,6 @@
   }
   ProfileService.$inject = ['$http', '$window'];
 
-  angular.module('crispy.main')
+  angular.module('crispy.auth')
   .factory('ProfileService', ProfileService);
 })();

@@ -1,7 +1,7 @@
 <form ng-submit="profile.save()" novalidate>
   <md-content layout-padding layout="row" layout-align="center">
     <div layout="column">
-      {{profile.message}}
+      <div class="error-message">{{profile.message}}</div>
       <md-input-container flex>
         <label>E-mail:</label>
         <input type="email" readonly ng-model="profile.data.email" autofocus>

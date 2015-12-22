@@ -1,7 +1,5 @@
 // app/routes.js
 
-// grab the nerd model we just created
-var Bear = require('./models/bear');
 var User = require('./models/user');
 var Message = require('./models/message');
 var jwt = require('jsonwebtoken');
@@ -36,65 +34,6 @@ var jwt = require('jsonwebtoken');
                   req.user = user;
                   next();
                 });
-                // console.log('Decoded:', decoded);
-            });
-        });
-
-        router.route('/bears')
-        .post(function(req, res) {
-            var bear = new Bear();
-            console.log(req.body);
-            bear.name = req.body.name;
-            console.log(bear);
-
-            bear.save(function(err) {
-                if (err)
-                    res.send(err);
-
-                res.json(bear);
-            })
-        })
-        .get(function(req, res) {
-            Bear.find(function(err, bears) {
-                if (err)
-                    res.send(err);
-
-                res.json(bears);
-            });
-        });
-        router.route('/bears/:bear_id')
-        .get(function(req, res) {
-            Bear.findById(req.params.bear_id, function(err, bear) {
-                if (err)
-                    res.send(err);
-                if (bear)
-                    res.json(bear);
-                else res.status(404).send();
-            });
-        })
-        .put(function(req, res) {
-            Bear.findById(req.params.bear_id, function(err, bear) {
-                if (err)
-                    res.send(err);
-
-                bear.name = req.body.name;
-
-                bear.save(function(err) {
-                    if (err)
-                        res.send(err);
-
-                    res.json(bear);
-                });
-            });
-        })
-        .delete(function(req, res) {
-            Bear.remove({
-                _id: req.params.bear_id
-            }, function(err, bear) {
-                if (err)
-                    res.send(err);
-
-                res.status(204).send();
             });
         });
 

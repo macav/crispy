@@ -59,7 +59,7 @@
         if (user) {
           user.unread = angular.isDefined(user.unread) ? user.unread + 1 : 1;
           $mdToast.show({
-            controller: 'ToastCtrl',
+            controller: 'MessageNotificationCtrl',
             templateUrl: 'conversation/message-notification-template.html',
             hideDelay: 3000,
             resolve: {
@@ -113,5 +113,5 @@
   angular.module('crispy.main')
   .controller('ConversationCtrl', ConversationCtrl)
   .config(ConversationConfig)
-  .controller('ToastCtrl', MessageNotificationCtrl);
+  .controller('MessageNotificationCtrl', MessageNotificationCtrl);
 })();

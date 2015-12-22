@@ -28,23 +28,7 @@
   }
   LoginCallbackCtrl.$inject = ['$state', 'AuthService', '$location'];
 
-  function config($stateProvider, $urlRouterProvider) {
-    $urlRouterProvider.otherwise('/login');
-    $urlRouterProvider.when('/login', ['$state', '$window', function($state, $window) {
-      if ($window.localStorage.accessToken) {
-        $state.go('main.conversation');
-      } else {
-        return false;
-      }
-    }]);
-    $urlRouterProvider.rule(function($injector, $location) {
-      var $window = $injector.get('$window');
-      var $state = $injector.get('$state');
-      if (!$window.localStorage.accessToken && ['/login', '/login/callback', '/register'].indexOf($location.path()) === -1) {
-        return $state.get('login').url;
-      }
-    });
-
+  function loginConfig($stateProvider) {
     $stateProvider
       .state('login', {
         url: '/login',
@@ -56,18 +40,10 @@
         controller: 'LoginCallbackCtrl'
       });
   }
-  config.$inject = ['$stateProvider', '$urlRouterProvider'];
-
-  function AuthModuleInit($window, AuthService) {
-    if ($window.localStorage.accessToken) {
-      AuthService.authenticateToken($window.localStorage.accessToken);
-    }
-  }
-  AuthModuleInit.$inject = ['$window', 'AuthService'];
+  loginConfig.$inject = ['$stateProvider'];
 
   angular.module('crispy.auth')
-  .config(config)
+  .config(loginConfig)
   .controller('LoginCtrl', LoginCtrl)
-  .controller('LoginCallbackCtrl', LoginCallbackCtrl)
-  .run(AuthModuleInit);
+  .controller('LoginCallbackCtrl', LoginCallbackCtrl);
 })();

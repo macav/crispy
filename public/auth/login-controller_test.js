@@ -2,10 +2,7 @@
 
 describe('Crispy auth module', function() {
 
-  beforeEach(module('ui.router'));
-  beforeEach(module('ngCookies'));
   beforeEach(module('crispy'));
-  beforeEach(module('crispy.main'));
   beforeEach(module('crispy.auth'));
   var $httpBackend;
   var scope;

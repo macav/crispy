@@ -19,6 +19,7 @@ module.exports = function(app, server) {
         if ( (existingUser = utils.findById(activeUsers, user._id)) !== null) {
           existingUser.socket.emit('forceLogout');
           existingUser.socket.disconnect();
+          activeUsers.splice(activeUsers.indexOf(existingUser), 1);
         }
         app.get('activeUsers').push(user);
 
@@ -53,19 +54,6 @@ module.exports = function(app, server) {
         console.log('we have login from %s (%s)', user.email, user._id);
       });
     });
-    // socket.on('message', function(message) {
-    //   // console.log('we have a message from %s: %s', socket.user._id, message);
-    //   var users = app.get('activeUsers');
-    //   for (var i = 0; i < users.length; i++) {
-    //     if (users[i]._id == data.recipient) {
-    //       users[i].socket.broadcast.emit('received', {
-    //         user: socket.user._id,
-    //         message: message,
-    //         date: new Date()
-    //       });
-    //     }
-    //   }
-    // });
     socket.on('letter', function(data) {
       var users = app.get('activeUsers');
       for (var i = 0; i < users.length; i++) {

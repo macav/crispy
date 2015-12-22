@@ -1,7 +1,7 @@
 <form ng-submit="vm.registerUser()" novalidate>
   <md-content layout-padding layout="row" layout-align="center">
     <div layout="column">
-      {{vm.message}}
+      <div class="error-message">{{vm.message}}</div>
       <md-input-container flex>
         <label>E-mail:</label>
         <input type="email" ng-model="vm.data.email" autofocus>

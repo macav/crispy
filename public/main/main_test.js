@@ -2,9 +2,6 @@
 
 describe('Crispy main module', function() {
 
-  beforeEach(module('ngAria'));
-  beforeEach(module('ngAnimate'));
-  beforeEach(module('ngMaterial'));
   beforeEach(module('crispy'));
   beforeEach(module('crispy.main'));
   beforeEach(module('crispy.auth'));

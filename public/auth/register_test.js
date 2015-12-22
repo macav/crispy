@@ -2,7 +2,6 @@
 
 describe('Crispy auth module', function() {
 
-  // beforeEach(module('ui.router'));
   beforeEach(module('crispy'));
   beforeEach(module('crispy.auth'));
   var $httpBackend;
@@ -39,8 +38,6 @@ describe('Crispy auth module', function() {
         password2: 'somethingelse'
       };
       ctrl.registerUser();
-      // $httpBackend.expectPOST('/auth/register').respond({message: 'Password has not been provided'});
-      // $httpBackend.flush();
       expect(ctrl.message).toBe('Passwords do not match');
     });
 

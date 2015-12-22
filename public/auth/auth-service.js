@@ -83,8 +83,36 @@
   }
   AuthService.$inject = ['$http', '$window', '$interval', 'mySocket', 'jwtHelper', 'ProfileService'];
 
+  function AuthServiceConfig($urlRouterProvider) {
+    $urlRouterProvider.otherwise('/login');
+    $urlRouterProvider.when('/login', ['$state', '$window', function($state, $window) {
+      if ($window.localStorage.accessToken) {
+        $state.go('main.conversation');
+      } else {
+        return false;
+      }
+    }]);
+    $urlRouterProvider.rule(function($injector, $location) {
+      var $window = $injector.get('$window');
+      var $state = $injector.get('$state');
+      if (!$window.localStorage.accessToken && ['/login', '/login/callback', '/register'].indexOf($location.path()) === -1) {
+        return $state.get('login').url;
+      }
+    });
+  }
+  AuthServiceConfig.$inject = ['$urlRouterProvider'];
+
+  function AuthModuleInit($window, AuthService) {
+    if ($window.localStorage.accessToken) {
+      AuthService.authenticateToken($window.localStorage.accessToken);
+    }
+  }
+  AuthModuleInit.$inject = ['$window', 'AuthService'];
+
   angular.module('crispy.auth', [
                'ui.router',
                'angular-jwt'])
-  .factory('AuthService', AuthService);
+  .factory('AuthService', AuthService)
+  .config(AuthServiceConfig).
+  run(AuthModuleInit);
 })();

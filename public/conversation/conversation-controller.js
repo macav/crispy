@@ -1,6 +1,13 @@
 (function() {
   'use strict';
 
+  /**
+   * @ngdoc controller
+   * @name crispy.conversation:MessageNotificationCtrl
+   * @description
+   * # Message Notification Controller
+   * Used for toast notifications for new messages
+   */
   function MessageNotificationCtrl($mdToast, message) {
     this.message = message;
     this.closeToast = function() {
@@ -12,6 +19,13 @@
   }
   MessageNotificationCtrl.$inject = ['$mdToast', 'message'];
 
+  /**
+   * @ngdoc service
+   * @name crispy.conversation
+   * @description
+   * # Conversation controller
+   *
+   */
   function ConversationCtrl($scope, users, messages, $state, $stateParams, $mdSidenav, mySocket, MessageService, $mdToast, ngAudio, $mdDialog, $mdMedia) {
     var vm = this;
     vm.messages = messages.data;

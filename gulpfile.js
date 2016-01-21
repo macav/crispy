@@ -118,12 +118,31 @@ pipes.validatedIndex = function() {
         .pipe(plugins.htmlhint.reporter());
 };
 
+pipes.buildJSDoc = function() {
+  var options = {
+    scripts: [
+      appPath + 'bower_components/angular/angular.min.js',
+      appPath + 'bower_components/angular/angular.min.js.map',
+      appPath + 'bower_components/angular-animate/angular-animate.min.js',
+      appPath + 'bower_components/angular-animate/angular-animate.min.js.map'
+    ],
+    html5Mode: false,
+    startPage: '/api',
+    title: "Crispy Docs",
+    titleLink: "/api"
+  }
+  return gulp.src(paths.scripts)
+        .pipe(plugins.ngdocs.process(options))
+        .pipe(gulp.dest('./docs'));
+};
+
 pipes.builtIndexProd = function() {
 
     var vendorScripts = pipes.builtVendorScriptsProd();
     var vendorStyles = pipes.builtVendorStylesProd();
     var appScripts = pipes.builtAppScriptsProd();
     var appStyles = pipes.builtStylesProd();
+    pipes.buildJSDoc();
 
     return pipes.validatedIndex()
         .pipe(gulp.dest(paths.distProd)) // write first to get relative path for inject
@@ -182,6 +201,8 @@ gulp.task('build-index', pipes.builtIndexProd);
 
 // builds a complete prod environment
 gulp.task('build', pipes.builtAppProd);
+
+gulp.task('build-doc', pipes.buildJSDoc);
 
 // cleans and builds a complete prod environment
 gulp.task('clean-build', ['clean'], pipes.builtAppProd);
@@ -273,6 +294,14 @@ gulp.task('validate', ['validate-partials', 'validate-index', 'validate-app-scri
 gulp.task('build-sass', pipes.buildSass);
 gulp.task('watch-sass', function() {
     gulp.watch(paths.sassStylesWatch, ['build-sass']);
+});
+
+gulp.task('serve-docs', function() {
+  plugins.connect.server({
+    root: 'docs',
+    livereload: true,
+    port: 8000
+  });
 });
 
 // default task builds for prod
